@@ -1,0 +1,30 @@
+[package]
+name = "typst-as-library"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# typst essentials
+typst = "*"
+comemo = "*"
+
+# Fetching and unzipping packages
+zune-inflate = { version = "0.2", default-features = false, features = [
+  "gzip",
+  "std",
+] }
+tar = "0.4"
+ureq = "3.2.0"
+
+# utils
+time = "*"
+ttf-parser = "*"
+typst-kit = { version = "*", features = ["embed-fonts"] }
+
+[lib]
+name = "typst_as_library"
+
+[dev-dependencies]
+typst-pdf = "*"

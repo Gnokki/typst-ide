@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core",
+    "crates/app",
+    "crates/cli",
+    "crates/typst-as-library"
+]

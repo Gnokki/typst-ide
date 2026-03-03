@@ -1,0 +1,568 @@
+/* ===================================================================
+   Typst IDE — Application stylesheet
+   Dark theme by default, light theme via [data-theme="light"]
+   =================================================================== */
+
+/* ── CSS variables ──────────────────────────────────────────────── */
+:root {
+    --bg:             #1e1e1e;
+    --bg-panel:       #252526;
+    --bg-navbar:      #3c3c3c;
+    --bg-input:       #3c3c3c;
+    --bg-hover:       #2a2d2e;
+    --bg-dropdown:    #252526;
+    --bg-console:     #1a1a1a;
+    --bg-status:      #007acc;
+    --border:         #474747;
+    --text:           #cccccc;
+    --text-muted:     #858585;
+    --text-navbar:    #cccccc;
+    --accent:         #0e639c;
+    --accent-hover:   #1177bb;
+    --btn-compile:    #0e639c;
+    --btn-compile-hover: #1177bb;
+    --error-bg:       #3c1f1f;
+    --error-text:     #f48771;
+    --success-text:   #89d185;
+    --warning-text:   #cca700;
+    --info-text:      #75beff;
+    --resize-handle:  #474747;
+    --resize-hover:   #007acc;
+    --scrollbar:      #424242;
+    --scrollbar-thumb: #686868;
+}
+
+[data-theme="light"] {
+    --bg:             #f3f3f3;
+    --bg-panel:       #ffffff;
+    --bg-navbar:      #dddddd;
+    --bg-input:       #ffffff;
+    --bg-hover:       #e8e8e8;
+    --bg-dropdown:    #f3f3f3;
+    --bg-console:     #f5f5f5;
+    --bg-status:      #007acc;
+    --border:         #cecece;
+    --text:           #333333;
+    --text-muted:     #717171;
+    --text-navbar:    #333333;
+    --accent:         #0065a9;
+    --accent-hover:   #0078c8;
+    --btn-compile:    #0065a9;
+    --btn-compile-hover: #0078c8;
+    --error-bg:       #fdf2f2;
+    --error-text:     #cd3131;
+    --success-text:   #388a34;
+    --warning-text:   #795e26;
+    --info-text:      #0065a9;
+    --resize-handle:  #cecece;
+    --resize-hover:   #0065a9;
+    --scrollbar:      #e0e0e0;
+    --scrollbar-thumb: #c0c0c0;
+}
+
+/* ── Reset & base ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--scrollbar); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+
+/* ── App layout ─────────────────────────────────────────────────── */
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ── Navbar ─────────────────────────────────────────────────────── */
+.navbar {
+    display: flex;
+    align-items: center;
+    background: var(--bg-navbar);
+    border-bottom: 1px solid var(--border);
+    height: 35px;
+    flex-shrink: 0;
+    padding: 0 8px;
+    gap: 4px;
+    user-select: none;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-navbar);
+    padding: 0 8px;
+    white-space: nowrap;
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 2px;
+}
+
+.navbar-end {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* Dropdown menu items */
+.menu-item {
+    position: relative;
+}
+
+.menu-trigger {
+    background: none;
+    border: none;
+    color: var(--text-navbar);
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 13px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.menu-trigger:hover,
+.menu-item.open .menu-trigger {
+    background: var(--bg-hover);
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    background: var(--bg-dropdown);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    min-width: 240px;
+    z-index: 1000;
+    list-style: none;
+    padding: 4px 0;
+}
+
+.menu-item.open .dropdown {
+    display: block;
+}
+
+.dropdown li {
+    display: flex;
+}
+
+.dropdown li button,
+.dropdown li label.menu-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text);
+    padding: 5px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+    gap: 16px;
+}
+
+.dropdown li button:hover,
+.dropdown li label.menu-label:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+.dropdown li button:hover kbd,
+.dropdown li label.menu-label:hover kbd {
+    color: rgba(255,255,255,.8);
+}
+
+.dropdown kbd {
+    font-family: inherit;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.dropdown .separator {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+    pointer-events: none;
+}
+
+.dropdown .menu-checkbox {
+    display: flex;
+    align-items: center;
+    padding: 5px 12px;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text);
+    width: 100%;
+}
+
+.dropdown .menu-checkbox:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+.dropdown .menu-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+/* Compile button */
+.compile-btn {
+    background: var(--btn-compile);
+    border: none;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.compile-btn:hover { background: var(--btn-compile-hover); }
+.compile-btn:active { transform: scale(.97); }
+
+/* Theme toggle */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.theme-toggle input { display: none; }
+
+/* ── Output console ─────────────────────────────────────────────── */
+.output-console {
+    background: var(--bg-console);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    max-height: 180px;
+    display: flex;
+    flex-direction: column;
+    transition: max-height .2s ease;
+}
+
+.output-console.hidden {
+    max-height: 0;
+    overflow: hidden;
+    border-bottom: none;
+}
+
+.console-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 10px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.console-header button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+}
+
+.console-header button:hover { color: var(--text); }
+
+.console-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 10px;
+    font-family: 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.console-content .log-success { color: var(--success-text); }
+.console-content .log-error   { color: var(--error-text); }
+.console-content .log-info    { color: var(--text-muted); }
+
+/* ── Main split ─────────────────────────────────────────────────── */
+.main-split {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.pane {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.editor-pane  { flex: 1 1 50%; }
+.preview-pane { flex: 1 1 50%; }
+
+.pane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    min-height: 28px;
+}
+
+.project-name {
+    font-weight: 500;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.save-indicator {
+    font-size: 11px;
+    color: var(--success-text);
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
+.save-indicator.unsaved {
+    color: var(--warning-text);
+}
+
+/* Resize handle */
+.resize-handle {
+    width: 4px;
+    background: var(--resize-handle);
+    cursor: col-resize;
+    flex-shrink: 0;
+    transition: background .15s;
+}
+
+.resize-handle:hover,
+.resize-handle.dragging {
+    background: var(--resize-hover);
+}
+
+/* Editor container */
+.editor-container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Preview pane */
+.preview-content {
+    flex: 1;
+    background: white;
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-content iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    flex: 1;
+}
+
+.preview-error {
+    color: var(--error-text);
+    padding: 12px;
+    background: var(--error-bg);
+    font-size: 12px;
+    white-space: pre-wrap;
+    font-family: 'Fira Code', monospace;
+}
+
+/* ── Status bar ─────────────────────────────────────────────────── */
+.status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-status);
+    padding: 0 10px;
+    height: 22px;
+    flex-shrink: 0;
+    font-size: 11px;
+    color: #ffffff;
+    gap: 16px;
+    overflow: hidden;
+}
+
+.status-bar span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.status-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+/* ── Toast notifications ────────────────────────────────────────── */
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    right: 16px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    pointer-events: none;
+    max-width: 360px;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.4);
+    pointer-events: auto;
+    animation: toastIn .2s ease;
+    color: #fff;
+}
+
+.toast.success { background: #1e4d24; border-left: 3px solid var(--success-text); }
+.toast.error   { background: #4d1e1e; border-left: 3px solid var(--error-text); }
+.toast.warning { background: #4d3d1e; border-left: 3px solid var(--warning-text); }
+.toast.info    { background: #1e344d; border-left: 3px solid var(--info-text); }
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(10px); }
+}
+
+.toast.removing {
+    animation: toastOut .2s ease forwards;
+}
+
+/* ── Modal / overlay ────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 8000;
+}
+
+.modal {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    min-width: 340px;
+    max-width: 480px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.modal label {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal input[type="text"] {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    padding: 6px 10px;
+    font-size: 13px;
+    outline: none;
+    width: 100%;
+}
+
+.modal input[type="text"]:focus {
+    border-color: var(--accent);
+}
+
+.modal-error {
+    color: var(--error-text);
+    font-size: 11px;
+    min-height: 1em;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.btn {
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-secondary {
+    background: var(--bg-input);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover { background: var(--bg-hover); }

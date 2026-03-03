@@ -1,0 +1,24 @@
+# Rust build artifacts
+target/
+**/Cargo.lock
+
+# Node.js
+frontend/node_modules/
+
+# Tailwind generated (se rebuild avec `npm run build:css`)
+frontend/dist/css/output.css
+
+# Monaco Editor vendor (14 MB, se recopie depuis node_modules)
+# faudra juste faire cp node_modules/monaco-editor/min/vs frontend/dist/vendor/monaco-editor -R
+frontend/dist/vendor/
+
+# Tauri generated schemas
+crates/app/gen/
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Env local
+.env
+.env.local

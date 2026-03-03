@@ -1,0 +1,10 @@
+[package]
+name = "cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+typst = "*"
+typst-as-library = { path = "../typst-as-library" }
+typst-pdf = "*"
+typst-svg = "*"

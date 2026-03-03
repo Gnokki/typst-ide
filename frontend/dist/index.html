@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typst IDE</title>
+    <!-- <link rel="stylesheet" href="css/app.css"> -->
+    <link rel="stylesheet" href="css/output.css">
+</head>
+<body>
+<div class="app-layout">
+
+    <!-- ## Navbar ############################################### -->
+    <nav class="navbar">
+        <div class="navbar-brand">Typst IDE</div>
+
+        <div class="navbar-menu">
+
+            <!-- Fichier -->
+            <div class="menu-item">
+                <button class="menu-trigger">Fichier</button>
+                <ul class="dropdown">
+                    <li><button id="new-project">Nouveau projet <kbd>Ctrl+Shift+N</kbd></button></li>
+                    <li><button id="open-project">Ouvrir un projet <kbd>Ctrl+Shift+O</kbd></button></li>
+                </ul>
+            </div>
+
+            <!-- Édition -->
+            <div class="menu-item">
+                <button class="menu-trigger">Édition</button>
+                <ul class="dropdown">
+                    <li><button id="action-undo">Annuler <kbd>Ctrl+Z</kbd></button></li>
+                    <li><button id="action-redo">Rétablir <kbd>Ctrl+Y</kbd></button></li>
+                    <li class="separator"></li>
+                    <li><button id="action-search">Chercher <kbd>Ctrl+F</kbd></button></li>
+                    <li><button id="action-replace">Chercher / Remplacer <kbd>Ctrl+H</kbd></button></li>
+                    <li><button id="action-goto">Aller à la ligne <kbd>Ctrl+G</kbd></button></li>
+                    <li><button id="action-comment">Commenter la ligne <kbd>Ctrl+/</kbd></button></li>
+                </ul>
+            </div>
+
+            <!-- Vue -->
+            <div class="menu-item">
+                <button class="menu-trigger">Vue</button>
+                <ul class="dropdown">
+                    <li><button id="zoom-in">Agrandir <kbd>Ctrl+Shift++</kbd></button></li>
+                    <li><button id="zoom-out">Rétrécir <kbd>Ctrl+Shift+-</kbd></button></li>
+                    <li><button id="zoom-reset">Taille normale <kbd>Ctrl+0</kbd></button></li>
+                    <li class="separator"></li>
+                    <li><button id="toggle-console">Console <kbd>Ctrl+E</kbd></button></li>
+                    <li class="separator"></li>
+                    <li>
+                        <label class="menu-checkbox">
+                            <input type="checkbox" id="auto-compile" checked>
+                            Auto-compilation
+                        </label>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Aide -->
+            <div class="menu-item">
+                <button class="menu-trigger">Aide</button>
+                <ul class="dropdown">
+                    <li><button onclick="window.__TAURI__?.opener?.open('https://typst.app/docs/')">Documentation Typst</button></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- <div class="navbar-end">
+        </div> -->
+    </nav>
+    <div class="flex items-center justify-between px-4 py-2">
+        
+            <div class="flex gap-2">
+                <button class="tool-btn" id="bold-btn">B</button>
+                <button class="tool-btn" id="italic-btn">I</button>
+                <button class="tool-btn" id="underline-btn">U</button>
+            </div>
+
+            <div class="flex gap-0">
+                <button class="tool-btn" id="zoom-out-btn">-</button>
+                <input class="tool-btn w-15 text-center" id="zoom-input" type="text" min="10" max="200" value="100"></input>
+                <button class="tool-btn" id="zoom-in-btn">+</button>
+            </div>
+            
+            <div class="flex gap-2">
+                <button class="tool-btn" id="compile-btn">Compiler</button>
+                <button class="tool-btn" id="save-btn">Save</button>
+            </div>
+        
+    </div>
+
+    <!-- ## Output console ####################################### -->
+    <div id="output-console" class="output-console hidden">
+        <div class="console-header">
+            <span>Console de compilation</span>
+            <button id="close-console" title="Fermer">&#x2715;</button>
+        </div>
+        <div id="console-content" class="console-content"></div>
+    </div>
+
+    <!-- ## Main split ########################################### -->
+    <div class="main-split" id="main-split">
+
+        <div class="pane editor-pane" id="editor-pane">
+            <!-- <div class="pane-header">
+                <span id="project-name" class="project-name">&#8212; Aucun projet &#8212;</span>
+                <span id="save-indicator" class="save-indicator" title="Sauvegard&eacute;">Save</span>
+            </div> -->
+            <div id="typst-editor" class="editor-container"></div>
+        </div>
+
+        <div class="resize-handle" id="resize-handle"></div>
+
+        <div class="pane preview-pane" id="preview-pane">
+            <div id="preview" class="preview-content">
+                <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ## Status bar ########################################### -->
+    <div class="status-bar">
+        <span id="status-project-path"></span>
+        <div class="status-right">
+            <span id="status-zoom">100%</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- Toast container -->
+<div id="toast-container" class="toast-container"></div>
+
+<script src="vendor/vs/loader.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
