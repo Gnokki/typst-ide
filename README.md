@@ -53,7 +53,7 @@ This differs from Typst Studio, which initially aimed for cross-platform compati
 ### 2. Technical simplicity
 I will try to keep this project simple, and keep it that way. 
 
-Previously, I thought simplicity meant small files, splitted, I only made the project more and more complicated by introducing too much configurability. From now on, configuration will be kept to what is strictly necessary, so the project doesn't become unnecessarily complex.
+Previously, I thought simplicity meant small files, splitted, but I only made the project more and more complicated by introducing too much configurability. From now on, configuration will be kept to what is strictly necessary, so the project doesn't become unnecessarily complex.
 
 ### 3. Simple features, but useful ones
 The goal is to add useful and powerful features, without making them overly complicated. 
