@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "tailwindcss -i src/input.css -o dist/css/output.css --minify",
     "dev:css": "tailwindcss -i src/input.css -o dist/css/output.css --watch",
-    "dev": "concurrently \"npm run dev:css\" \"vite dist --port 1420\""
+    "dev": "concurrently \"npm run dev:css\" \"vite dist --port 1420\"",
+    "postinstall": "node -e \"require('fs').cpSync('node_modules/monaco-editor/min/vs','dist/vendor/vs',{recursive:true})\""
   },
   "keywords": [],
   "author": "",
