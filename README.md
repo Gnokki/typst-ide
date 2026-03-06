@@ -7,6 +7,37 @@ Harder. Better. Faster. Stronger.
 
 A modern local Typst editor (not a lie anymore, since Electron has been replaced with Tauri), with an intuitive writing experience.
 
+# Preview
+![preview](./images/preview.png)
+
+# Installation
+## Users
+Not yet implemented: I'll make a CI/CD pipeline to compile the app when a release will come out.
+
+## Developers
+Clone this repository:
+```sh
+git clone https://gitlab.com/gnoooo/typst-ide
+cd typst-ide
+```
+
+Since I didn't pushed the whole repository, we neet to initialize some things:
+1. NPM packages
+    ```sh
+
+    ```
+2. Copy some packages to `dist/vendor` (???)
+    - Maybe will change (Monaco Editor will be charged directly by referring to the `node_modules` files)
+    ```sh
+    
+    ```
+3. Cargo
+
+# Usage
+## Typical workflow
+TODO: Explain what's going on the first time we open the app...
+
+
 # Philosophy
 In the next paragraphs, I will refer to the official online Typst platform as "**Typst.app**".
 
