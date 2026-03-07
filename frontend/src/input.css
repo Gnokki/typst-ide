@@ -3,118 +3,160 @@
 @import "../node_modules/material-symbols/outlined.css";
 
 /* ###################################################################
-   Typst IDE : Application stylesheet
+   Typst IDE  Application stylesheet
    Dark theme by default, light theme via [data-theme="light"]
    ################################################################### */
-
-/* ## CSS variables ################################################ */
+   
+/* #################################################################
+   1. CSS Custom Properties (Design Tokens)
+   ################################################################# */
 :root {
-    --bg:             #1e1e1e;
-    --bg-panel:       #252526;
-    --bg-navbar:      #3c3c3c;
-    --bg-input:       #3c3c3c;
-    --bg-hover:       #2a2d2e;
-    --bg-dropdown:    #252526;
-    --bg-console:     #1a1a1a;
-    --bg-status:      #007acc;
-    --border:         #474747;
-    --text:           #cccccc;
-    --text-muted:     #858585;
-    --text-navbar:    #cccccc;
-    --accent:         #0e639c;
-    --accent-hover:   #1177bb;
-    --btn-tool:    #0e639c;
-    --btn-tool-hover: #1177bb;
-    --error-bg:       #3c1f1f;
-    --error-text:     #f48771;
-    --success-text:   #89d185;
-    --warning-text:   #cca700;
-    --info-text:      #75beff;
-    --resize-handle:  #474747;
-    --resize-hover:   #007acc;
-    --scrollbar:      #424242;
+    /*  Surfaces  */
+    --bg:              #1e1e1e;
+    --bg-panel:        #252526;
+    --bg-navbar:       #3c3c3c;
+    --bg-input:        #3c3c3c;
+    --bg-hover:        #2a2d2e;
+    --bg-dropdown:     #252526;
+    --bg-console:      #1a1a1a;
+    --bg-status:       #007acc;
+
+    /*  Borders  */
+    --border:          #474747;
+
+    /*  Text  */
+    --text:            #cccccc;
+    --text-muted:      #858585;
+    --text-navbar:     #cccccc;
+
+    /*  Accent / Buttons  */
+    --accent:          #0e639c;
+    --accent-hover:    #1177bb;
+    --btn-tool:        #0e639c;
+    --btn-tool-hover:  #1177bb;
+
+    /*  Semantic  */
+    --error-bg:        #3c1f1f;
+    --error-text:      #f48771;
+    --success-text:    #89d185;
+    --warning-text:    #cca700;
+    --info-text:       #75beff;
+
+    /*  Resize handle  */
+    --resize-handle:   #474747;
+    --resize-hover:    #007acc;
+
+    /*  Scrollbar  */
+    --scrollbar:       #424242;
     --scrollbar-thumb: #686868;
 
-    --bg-blink: #8ce0ff;
-    --text-blink: #00bbff;
-    /* --bg-note-btn: #2a2d2e; */
+    /*  Unsaved-blink animation  */
+    --bg-blink:        #8ce0ff;
+    --text-blink:      #00bbff;
+
+    /*  Shared tokens (shadows, radii, font stacks)  */
+    --shadow-sm:       0 0.8px 1.6px rgba(0, 0, 0, .16);
+    --shadow-md:       0 4px 16px rgba(0, 0, 0, .4);
+    --shadow-lg:       0 8px 32px rgba(0, 0, 0, .5);
+    --shadow-toast:    0 4px 12px rgba(0, 0, 0, .4);
+    --radius-sm:       6px;
+    --radius-md:       8px;
+    --radius-lg:       16px;
+    --font-mono:       'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+    --font-ui:         -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --transition-fast: .15s ease;
+    --transition-med:  .2s ease;
 }
 
 [data-theme="light"] {
-    --bg:             #f3f3f3;
-    --bg-panel:       #ffffff;
-    --bg-navbar:      transparent;
-    --bg-input:       #ffffff;
-    --bg-hover:       #e8e8e8;
-    --bg-dropdown:    #f3f3f3;
-    --bg-console:     #f5f5f5;
-    --bg-status:      #007acc;
-    --border:         #cecece;
-    --text:           #333333;
-    --text-muted:     #717171;
-    --text-navbar:    #333333;
-    --accent:         #e9e9e9;
-    --accent-hover:   #e9e9e9;
-    --btn-tool:       #fdfdfd;
-    --btn-tool-hover: #e9e9e9;
-    --error-bg:       #fdf2f2;
-    --error-text:     #cd3131;
-    --success-text:   #388a34;
-    --warning-text:   #dfa32c;
-    --info-text:      #0065a9;
-    --resize-handle:  #cecece;
-    --resize-hover:   #0065a9;
-    --scrollbar:      #e0e0e0;
+    --bg:              #f3f3f3;
+    --bg-panel:        #ffffff;
+    --bg-navbar:       transparent;
+    --bg-input:        #ffffff;
+    --bg-hover:        #e8e8e8;
+    --bg-dropdown:     #f3f3f3;
+    --bg-console:      #f5f5f5;
+    --bg-status:       #007acc;
+    --border:          #cecece;
+    --text:            #333333;
+    --text-muted:      #717171;
+    --text-navbar:     #333333;
+    --accent:          #e9e9e9;
+    --accent-hover:    #e9e9e9;
+    --btn-tool:        #fdfdfd;
+    --btn-tool-hover:  #e9e9e9;
+    --error-bg:        #fdf2f2;
+    --error-text:      #cd3131;
+    --success-text:    #388a34;
+    --warning-text:    #dfa32c;
+    --info-text:       #0065a9;
+    --resize-handle:   #cecece;
+    --resize-hover:    #0065a9;
+    --scrollbar:       #e0e0e0;
     --scrollbar-thumb: #c0c0c0;
-
-    --bg-blink: #8ce0ff;
-    --text-blink: #00bbff;
+    --bg-blink:        #8ce0ff;
+    --text-blink:      #00bbff;
 }
 
-/* ## Reset & base ################################################# */
+/* #################################################################
+   2. Reset & Base
+   ################################################################# */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 @font-face {
     font-family: "Inter";
     src: url("../fonts/InterVariable.ttf") format("truetype");
-    /* font-weight: bold; */
+}
+@font-face {
+    font-family: "Libertinus Serif Bold";
+    src: url("../fonts/LibertinusSerif-Bold.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Liberation Mono Bold";
+    src: url("../fonts/LiberationMono-Bold.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
 }
 
 html, body {
     height: 100%;
     overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-ui);
     font-size: 13px;
     background: var(--bg);
     color: var(--text);
 }
 
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar       { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--scrollbar); }
-::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: var(--radius-sm); }
 
-/* ## App layout ################################################### */
+/* #################################################################
+   3. App Layout
+   ################################################################# */
 .app-layout {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding: 0px 8px 0px 8px;
+    padding: 0 8px;
 }
 
 .toolbar-row {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    /* padding: 4px 16px; */
     flex-shrink: 0;
 }
 
-/* ## Navbar ####################################################### */
+/* #################################################################
+   4. Navbar
+   ################################################################# */
 .navbar {
     display: flex;
     align-items: center;
     background: var(--bg-navbar);
-    /* border-bottom: 1px solid var(--border); */
     height: 35px;
     flex-shrink: 0;
     padding: 0 8px;
@@ -128,19 +170,6 @@ html, body {
     color: var(--text-navbar);
     padding: 0 8px;
     white-space: nowrap;
-}
-
-@font-face {
-    font-family: "Libertinus Serif Bold";
-    src: url("../fonts/LibertinusSerif-Bold.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-}
-@font-face {
-    font-family: "Liberation Mono Bold";
-    src: url("../fonts/LiberationMono-Bold.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
 }
 
 #title-typst {
@@ -161,17 +190,10 @@ html, body {
     gap: 2px;
 }
 
-.navbar-end {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-}
-
-/* Dropdown menu items */
-.menu-item {
-    position: relative;
-}
+/* #################################################################
+   5. Dropdown Menus
+   ################################################################# */
+.menu-item { position: relative; }
 
 .menu-trigger {
     background: none;
@@ -180,7 +202,7 @@ html, body {
     padding: 4px 8px;
     cursor: pointer;
     font-size: 13px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     white-space: nowrap;
 }
 
@@ -196,21 +218,17 @@ html, body {
     left: 0;
     background: var(--bg-dropdown);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    box-shadow: 0 4px 16px rgba(0,0,0,.4);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
     min-width: 240px;
     z-index: 1000;
     list-style: none;
     padding: 4px 0;
 }
 
-.menu-item.open .dropdown {
-    display: block;
-}
+.menu-item.open .dropdown { display: block; }
 
-.dropdown li {
-    display: flex;
-}
+.dropdown li { display: flex; }
 
 .dropdown li button,
 .dropdown li label.menu-label {
@@ -231,24 +249,17 @@ html, body {
 .dropdown li button:hover,
 .dropdown li label.menu-label:hover {
     background: var(--accent-hover);
-    transition-duration: 0.2s;
-    /* color: #000; */
+    transition-duration: var(--transition-med);
 }
-
-/* .dropdown li button:hover kbd,
-.dropdown li label.menu-label:hover kbd {
-    color: rgba(255,255,255,.8);
-} */
 
 .dropdown kbd {
     font-family: inherit;
     font-size: 11px;
     color: var(--text-muted);
     border: 1px solid var(--border);
-    /* white-space: nowrap; */
     margin-left: auto;
-    padding: 0px 2px 0px 2px;
-    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    padding: 0 2px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
 }
 
 .dropdown .separator {
@@ -267,12 +278,11 @@ html, body {
     font-size: 12px;
     color: var(--text);
     width: 100%;
-    transition-duration: 0.2s;
+    transition-duration: var(--transition-med);
 }
 
 .dropdown .menu-checkbox:hover {
     background: var(--accent);
-    /* color: #fff; */
 }
 
 .dropdown .menu-checkbox input[type="checkbox"] {
@@ -280,239 +290,124 @@ html, body {
     accent-color: var(--accent);
 }
 
-/* Tool button */
+/* #################################################################
+   6. Tool Buttons
+   ################################################################# */
 .tool-btn {
     font-family: "Inter";
     background: var(--btn-tool);
     border: 1px solid var(--border);
     color: #222;
-    /* padding: 4px 12px; */
     height: 28px;
-    padding: 0px 10px;
-    border-radius: 6px;
-    box-shadow: 0 0.8px 1.6px rgba(0,0,0,.16);
+    padding: 0 10px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
     cursor: pointer;
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
-    transition-duration: 0.2s;
+    transition-duration: var(--transition-med);
 }
+
+.tool-btn:focus,
+.tool-btn:hover {
+    background: var(--btn-tool-hover);
+}
+
+.tool-btn:active { transform: scale(.97); }
 
 .btn-group .tool-btn {
     border: none;
     border-radius: 0;
-    /* box-shadow: none; */
 }
 
+/*  Unsaved indicator  */
 @keyframes unsavedBlink {
-    0%,100% { 
+    0%, 100% {
         background-color: transparent;
-        color: var(--text-blink) 
+        color: var(--text-blink);
     }
-    50% { 
+    50% {
         background-color: var(--bg-blink);
         border-color: var(--text-blink);
-        color: #0080af; 
+        color: #0080af;
     }
 }
-._unsaved-blinking { animation: unsavedBlink 2s infinite; }
+
+._unsaved-blinking       { animation: unsavedBlink 2s infinite; }
 ._unsaved-blinking:hover { animation-play-state: paused; }
-._unsaved-btn-none {
-    display: none;
-}
-#unsaved-btn{ 
-    padding: 2px 6px 0px 6px; 
-}
-#unsaved-icon {
-    font-size: 19px;
-    text-align: center;
-    margin: 0 auto;
-}
-#notepad-btn{ padding: 2px 6px 0px 6px; }
-#notepad-icon {
-    font-size: 19px;
-    text-align: center;
-    margin: 0 auto;
-}
+._unsaved-btn-none       { display: none; }
 
-.note-btn {
-    border-radius: 6px;
-    background-color: var(--btn-tool);
-    border: 1.6px solid var(--border);
-    box-shadow: 0 0.8px 1.6px rgba(0,0,0,.16);
-    cursor: pointer;
-    
-    width: 100%;
-    margin-top: 6px;
-    padding: 2px 6px;
-    transition: 0.2s;
-}
-.note-btn:hover {
-    background: var(--btn-tool-hover);
-}
-.note-btn-title {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: start;
-}
-.note-btn-content {
-    /* font-family: "Monaspace Krypton"; dynamiquement instanciée par le js, pour avoir la même que celle de l'éditeur*/ 
-    font-size: 12px;
-    text-align: start;
-    margin-top: 2px;
-    margin-left: 8px;
+#unsaved-btn  { padding: 2px 6px 0 6px; }
+#unsaved-icon { font-size: 19px; text-align: center; margin: 0 auto; }
 
-    white-space: pre-wrap;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.delete-note-btn {
-    color: var(--error-text);
-    padding: 2px;
-    border-radius: 6px;
-    transition: 0.2s;
-    cursor: pointer;
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.delete-note-btn:hover {
-    background-color: var(--error-text);
-    color: white;
+#notepad-btn  { padding: 2px 6px 0 6px; }
+#notepad-icon { font-size: 19px; text-align: center; margin: 0 auto; }
 
-}
-.delete-note-icon {
-    font-size: 20px;
-}
-.edit-note-btn {
-    color: var(--warning-text);
-    padding: 2px;
-    border-radius: 6px;
-    transition: 0.2s;
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.edit-note-btn:hover {
-    background-color: var(--warning-text);
-    color: white;
-
-}
-.edit-note-icon {
-    font-size: 20px;
-}
-.view-note-btn {
-    color: var(--info-text);
-    padding: 2px;
-    border-radius: 6px;
-    transition: 0.2s;
-    cursor: pointer;
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.view-note-btn:hover {
-    background-color: var(--info-text);
-    color: white;
-
-}
-.view-note-icon {
-    font-size: 20px;
-}
-#note-preview-content {
-    background-color: var(--btn-tool-hover);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    margin-top: 8px;
-    padding: 8px 16px;
-    white-space:pre-wrap;
-    font-size:13px;
-}
-
+/*  Bold / Italic / Underline group  */
 #bold-btn {
     font-size: 15px;
     font-weight: 600;
-
-    border-radius: 6px 0 0 6px;
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
     border-left: 1px solid var(--border);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
 }
+
 #italic-btn {
     font-style: italic;
     font-size: 15px;
-    
     border: 1px solid var(--border);
 }
+
 #underline-btn {
     text-decoration: underline;
     font-size: 15px;
-
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     border-right: 1px solid var(--border);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
 }
 
+/*  Zoom panel  */
 #preview-zoom-panel {
     font-weight: 500;
-    /* font-size: 16px; */
-
     background: var(--btn-tool);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    box-shadow: 0 0.8px 1.6px rgba(0,0,0,.16);
-    
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
     white-space: nowrap;
     display: flex;
     align-items: stretch;
 }
 
-#zoom-preview-out-btn , #zoom-preview-in-btn {
+#zoom-preview-out-btn,
+#zoom-preview-in-btn {
     font-size: 16px;
     border: none;
     border-radius: 0;
     box-shadow: none;
 }
-#zoom-preview-out-btn { 
-    border-right: 1px solid var(--border); 
-    border-radius: 6px 0px 0px 6px;
-}
-#zoom-preview-in-btn { 
-    border-left: 1px solid var(--border); 
-    border-radius: 0px 6px 6px 0px;
-}
-#zoom-preview-input {
-    text-align: center;
-}
-#zoom-display {
-    padding: 0 0.8vw 0 0.8vw;
+
+#zoom-preview-out-btn {
+    border-right: 1px solid var(--border);
+    border-radius: var(--radius-sm) 0 0 var(--radius-sm);
 }
 
+#zoom-preview-in-btn {
+    border-left: 1px solid var(--border);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
 
+#zoom-preview-input { text-align: center; }
+#zoom-display       { padding: 0 0.8vw; }
+
+/* Hide number spinners */
 #zoom-preview-input::-webkit-outer-spin-button,
-#zoom-preview-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+#zoom-preview-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+#zoom-preview-input[type=number] { -moz-appearance: textfield; }
 
-#zoom-preview-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-.tool-btn:focus, .tool-btn:hover { 
-    background: var(--btn-tool-hover); 
-    
-}
-.tool-btn:active { transform: scale(.97); }
-
-/* Theme toggle */
+/*  Theme toggle  */
 .theme-toggle {
     display: flex;
     align-items: center;
@@ -523,7 +418,81 @@ html, body {
 
 .theme-toggle input { display: none; }
 
-/* ## Output console ############################################### */
+/* #################################################################
+   7. Notepad Cards
+   ################################################################# */
+.note-btn {
+    border-radius: var(--radius-sm);
+    background-color: var(--btn-tool);
+    border: 1.6px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    width: 100%;
+    margin-top: 6px;
+    padding: 2px 6px;
+    transition: var(--transition-med);
+}
+
+.note-btn:hover { background: var(--btn-tool-hover); }
+
+.note-btn-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: start;
+}
+
+.note-btn-content {
+    font-size: 12px;
+    text-align: start;
+    margin-top: 2px;
+    margin-left: 8px;
+    white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Shared note-action button base */
+.delete-note-btn,
+.edit-note-btn,
+.view-note-btn {
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-med);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-note-btn { color: var(--error-text); }
+.edit-note-btn   { color: var(--warning-text); }
+.view-note-btn   { color: var(--info-text); }
+
+.delete-note-btn:hover { background-color: var(--error-text);   color: white; }
+.edit-note-btn:hover   { background-color: var(--warning-text); color: white; }
+.view-note-btn:hover   { background-color: var(--info-text);    color: white; }
+
+.delete-note-icon,
+.edit-note-icon,
+.view-note-icon {
+    font-size: 20px;
+}
+
+#note-preview-content {
+    background-color: var(--btn-tool-hover);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-top: 8px;
+    padding: 8px 16px;
+    white-space: pre-wrap;
+    font-size: 13px;
+}
+
+/* #################################################################
+   8. Output Console
+   ################################################################# */
 .output-console {
     background: var(--bg-console);
     border-bottom: 1px solid var(--border);
@@ -531,7 +500,7 @@ html, body {
     max-height: 180px;
     display: flex;
     flex-direction: column;
-    transition: max-height .2s ease;
+    transition: max-height var(--transition-med);
 }
 
 .output-console.hidden {
@@ -566,7 +535,7 @@ html, body {
     flex: 1;
     overflow-y: auto;
     padding: 6px 10px;
-    font-family: 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.6;
     white-space: pre-wrap;
@@ -577,7 +546,9 @@ html, body {
 .console-content .log-error   { color: var(--error-text); }
 .console-content .log-info    { color: var(--text-muted); }
 
-/* ## Main split ################################################### */
+/* #################################################################
+   9. Main Split (Editor + Preview)
+   ################################################################# */
 .main-split {
     display: flex;
     flex: 1;
@@ -617,24 +588,13 @@ html, body {
     white-space: nowrap;
 }
 
-.save-indicator {
-    font-size: 11px;
-    color: var(--success-text);
-    margin-left: 6px;
-    flex-shrink: 0;
-}
-
-.save-indicator.unsaved {
-    color: var(--warning-text);
-}
-
-/* Resize handle */
+/*  Resize handle  */
 .resize-handle {
     width: 4px;
     background: var(--resize-handle);
     cursor: col-resize;
     flex-shrink: 0;
-    transition: background .15s;
+    transition: background var(--transition-fast);
 }
 
 .resize-handle:hover,
@@ -642,17 +602,17 @@ html, body {
     background: var(--resize-hover);
 }
 
-/* Editor container */
+/*  Editor  */
 .editor-container {
     flex: 1;
     min-height: 0;
     overflow: hidden;
     margin-bottom: 8px;
     margin-right: 8px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
 }
 
-/* Preview pane */
+/*  Preview  */
 .preview-content {
     flex: 1;
     background: white;
@@ -660,7 +620,7 @@ html, body {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     margin-left: 8px;
     margin-right: 8px;
     margin-bottom: 8px;
@@ -673,50 +633,18 @@ html, body {
     flex: none;
 }
 
-/* #preview-container {
-    margin-left: 8px;
-    border-radius: 8px;
-} */
-
 .preview-error {
     color: var(--error-text);
     padding: 12px;
     background: var(--error-bg);
     font-size: 12px;
     white-space: pre-wrap;
-    font-family: 'Fira Code', monospace;
+    font-family: var(--font-mono);
 }
 
-/* ## Status bar ################################################### */
-.status-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-status);
-    padding: 0 10px;
-    height: 22px;
-    flex-shrink: 0;
-    font-size: 11px;
-    color: #ffffff;
-    gap: 16px;
-    overflow: hidden;
-}
-
-.status-bar span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.status-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
-    margin-left: auto;
-}
-
-/* ## Toast notifications ########################################## */
+/* #################################################################
+   10. Toast Notifications
+   ################################################################# */
 .toast-container {
     position: fixed;
     bottom: 30px;
@@ -734,11 +662,11 @@ html, body {
     align-items: center;
     gap: 10px;
     padding: 10px 14px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.4);
+    box-shadow: var(--shadow-toast);
     pointer-events: auto;
-    animation: toastIn .2s ease;
+    animation: toastIn var(--transition-med);
     color: #fff;
 }
 
@@ -758,14 +686,16 @@ html, body {
 }
 
 .toast.removing {
-    animation: toastOut .2s ease forwards;
+    animation: toastOut var(--transition-med) forwards;
 }
 
-/* ## Modal / overlay ############################################## */
+/* #################################################################
+   11. Modal / Overlay
+   ################################################################# */
 .ide-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.6);
+    background: rgba(0, 0, 0, .6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -774,18 +704,16 @@ html, body {
     transition: opacity 150ms ease;
 }
 
-.ide-modal-overlay--visible {
-    opacity: 1;
-}
+.ide-modal-overlay--visible { opacity: 1; }
 
 .ide-modal {
     background: var(--bg-panel);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     min-width: 340px;
     max-width: 90vw;
     max-height: 85vh;
-    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    box-shadow: var(--shadow-lg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -793,11 +721,8 @@ html, body {
     transition: transform 150ms ease;
 }
 
-.ide-modal-overlay--visible .ide-modal {
-    transform: translateY(0);
-}
+.ide-modal-overlay--visible .ide-modal { transform: translateY(0); }
 
-/* Header */
 .ide-modal-header {
     display: flex;
     align-items: center;
@@ -822,7 +747,7 @@ html, body {
     line-height: 1;
     cursor: pointer;
     padding: 0 2px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
 }
 
 .ide-modal-close-btn:hover {
@@ -830,7 +755,6 @@ html, body {
     background: var(--bg-hover);
 }
 
-/* Body — scrollable if content overflows */
 .ide-modal-body {
     padding: 20px;
     overflow-y: auto;
@@ -849,7 +773,6 @@ html, body {
     margin: 0;
 }
 
-/* Label + input inside modal body */
 .ide-modal-label {
     font-size: 12px;
     color: var(--text-muted);
@@ -861,7 +784,7 @@ html, body {
 .ide-modal-input {
     background: var(--bg-input);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     color: var(--text);
     padding: 6px 10px;
     font-size: 13px;
@@ -869,9 +792,7 @@ html, body {
     width: 100%;
 }
 
-.ide-modal-input:focus {
-    border-color: var(--accent);
-}
+.ide-modal-input:focus { border-color: var(--accent); }
 
 .ide-modal-error {
     color: var(--error-text);
@@ -879,7 +800,6 @@ html, body {
     min-height: 1em;
 }
 
-/* Footer */
 .ide-modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -889,10 +809,12 @@ html, body {
     flex-shrink: 0;
 }
 
-/* Buttons */
+/* #################################################################
+   12. Generic Buttons (Modals, etc.)
+   ################################################################# */
 .btn {
     padding: 6px 14px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: none;
     cursor: pointer;
     font-size: 12px;
