@@ -3,7 +3,7 @@
  *  wires all modules together
  */
 
-import { createEditor, setEditorTheme, zoomIn, zoomOut, zoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily } from './editor.js';
+import { createEditor, setEditorTheme, zoomIn, zoomOut, zoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily, getEditor } from './editor.js';
 import { initPreview, zoomPreviewIn, zoomPreviewOut, zoomPreviewReset, getPreviewZoom } from './preview.js';
 import { initToolbar, initTheme, writeToConsole, showConsole } from './toolbar.js';
 import { registerShortcuts } from './shortcuts.js';
@@ -38,6 +38,7 @@ async function main() {
         onChange:  (cb) => editor.onDidChangeModelContent(cb),
         preview,
         frame,
+        onDiagnostics: (diagnostics) => applyMonacoMarkers(editor, diagnostics),
     });
 
     // ## Autosave ###################################################
@@ -85,6 +86,11 @@ async function main() {
 
     // Notepad buttons
     bindMenuAction('notepad-btn', () => { openNotepad(); });
+
+    // Change style of font
+    bindMenuAction('bold-btn', () => getEditor().getAction('typst-bold')?.run());
+    bindMenuAction('italic-btn', () => getEditor().getAction('typst-italic')?.run());
+    bindMenuAction('underline-btn', () => getEditor().getAction('typst-underline')?.run());
 
     // Zoom input fields
     bindMenuAction("zoom-preview-in-btn",   () => { zoomPreviewIn();    updateZoomPreview(); });
@@ -159,9 +165,7 @@ function bindMenuAction(id, fn) {
 
 function updateZoomPreview() {
     const zoomEl = document.getElementById('zoom-preview-input');
-    console.log(zoomEl);
     if (zoomEl) zoomEl.value = getPreviewZoom();
-    console.log(`Preview zoom: ${getPreviewZoom()}%`);
 }
 
 // Force an immediate preview compile by programmatically running the Tauri command
@@ -169,24 +173,51 @@ async function triggerCompile(editor, preview, frame) {
     const { invoke } = window.__TAURI__.core;
     try {
         const html = await invoke('render_preview', { source: editor.getValue() });
-        // Clear any error
+        applyMonacoMarkers(editor, []);
         preview.querySelector('.preview-error')?.remove();
         frame.style.display = '';
         frame.contentDocument.open();
         frame.contentDocument.write(html);
         frame.contentDocument.close();
-
-        writeToConsole('success', 'Compilation réussie.');
+        writeToConsole('success', 'Compilation successful');
     } catch (err) {
-        writeToConsole('error', String(err));
+        const diagnostics = Array.isArray(err) ? err : [];
+        applyMonacoMarkers(editor, diagnostics);
+        const msg = diagnostics.length > 0
+            ? diagnostics.map(d => {
+                const loc = d.line != null ? ` (line ${d.line}, col ${d.column})` : '';
+                const hint = d.hints?.length ? `\n  > ${d.hints.join('\n  > ')}` : '';
+                return `${d.severity === 'error' ? 'Error' : 'Warn'} ${d.message}${loc}${hint}`;
+              }).join('\n')
+            : String(err);
+        writeToConsole('error', msg);
         showConsole();
         frame.style.display = 'none';
         preview.querySelector('.preview-error')?.remove();
         const div = document.createElement('div');
         div.className = 'preview-error';
-        div.textContent = String(err);
+        div.textContent = diagnostics.length > 0 ? diagnostics.map(d => d.message).join('\n') : String(err);
         preview.appendChild(div);
     }
+}
+
+// Sets Monaco editor markers (squiggly underlines) from Typst DiagnosticInfo[]
+function applyMonacoMarkers(editor, diagnostics) {
+    const model = editor.getModel();
+    if (!model) return;
+    const markers = diagnostics.map(d => ({
+        severity: d.severity === 'error'
+            ? monaco.MarkerSeverity.Error
+            : monaco.MarkerSeverity.Warning,
+        message: d.hints?.length
+            ? `${d.message}\nHint: ${d.hints.join('\n')}`
+            : d.message,
+        startLineNumber: d.line     ?? 1,
+        startColumn:     d.column   ?? 1,
+        endLineNumber:   d.end_line ?? d.line   ?? 1,
+        endColumn:       d.end_column ?? (d.column != null ? d.column + 1 : 2),
+    }));
+    monaco.editor.setModelMarkers(model, 'typst', markers);
 }
 
 // Export current source to PDF, asking for a path on first save
