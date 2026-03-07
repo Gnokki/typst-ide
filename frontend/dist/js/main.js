@@ -87,7 +87,7 @@ async function main() {
     // Notepad buttons
     bindMenuAction('notepad-btn', () => { openNotepad(); });
 
-    // Change style of font
+    // Change style of text
     bindMenuAction('bold-btn', () => getEditor().getAction('typst-bold')?.run());
     bindMenuAction('italic-btn', () => getEditor().getAction('typst-italic')?.run());
     bindMenuAction('underline-btn', () => getEditor().getAction('typst-underline')?.run());

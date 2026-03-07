@@ -6,6 +6,7 @@ pub use compile::{
     compile_to_pdf,
     create_default_world,
     create_html_world,
-    create_world_with_root
+    create_world_with_root,
+    DiagnosticInfo,
 };
 // pub use export::export_to_pdf;

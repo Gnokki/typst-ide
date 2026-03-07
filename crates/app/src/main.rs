@@ -4,7 +4,7 @@
 use std::sync::Mutex;
 use serde::Serialize;
 use tauri::Manager;
-use typst_ide_core::compiler::{compile_to_preview_html, compile_to_pdf};
+use typst_ide_core::compiler::{compile_to_preview_html, compile_to_pdf, DiagnosticInfo};
 use typst_ide_core::database::notes_db::{self, Note};
 
 // ## Database state ############################################################
@@ -22,10 +22,15 @@ pub struct NotesDbState(pub Mutex<rusqlite::Connection>);
 /// Compiles Typst source code to a preview HTML document (pages rendered as inline SVGs)
 /// Runs on a blocking thread pool to avoid freezing the UI during compilation
 #[tauri::command]
-async fn render_preview(source: String) -> Result<String, String> {
+async fn render_preview(source: String) -> Result<String, Vec<DiagnosticInfo>> {
     tauri::async_runtime::spawn_blocking(move || compile_to_preview_html(&source))
         .await
-        .map_err(|e| e.to_string())?
+        .map_err(|e| vec![DiagnosticInfo {
+            severity: "error".into(),
+            message: e.to_string(),
+            hints: vec![],
+            line: None, column: None, end_line: None, end_column: None,
+        }])?
 }
 
 // ###########################################################################

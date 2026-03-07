@@ -56,6 +56,13 @@ export function registerShortcuts({ editor, onCompile, onZoomIn, onZoomOut, onZo
     });
 
     editor.addAction({
+        id: 'editor-comment',
+        label: 'Commenter',
+        keybindings: [KM.CtrlCmd | KM.Shift | KC.Slash] || [KM.CtrlCmd | KC.Slash],
+        run: (ed) => ed.getAction('editor.action.commentLine')?.run(),
+    });
+
+    editor.addAction({
         id: 'typst-compile',
         label: 'Compiler',
         keybindings: [KM.CtrlCmd | KC.KeyR],
@@ -99,6 +106,11 @@ export function registerShortcuts({ editor, onCompile, onZoomIn, onZoomOut, onZo
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.code === 'KeyO') {
             e.preventDefault();
             onOpenProject();
+        }
+        // Ctrl+/ : WebKitGTK swallows this before Monaco sees it, so we handle it here
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && (e.code === 'Slash' || e.key === '/')) {
+            e.preventDefault();
+            editor.getAction('editor.action.commentLine')?.run();
         }
     }, true);
 }

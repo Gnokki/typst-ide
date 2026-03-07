@@ -75,7 +75,7 @@ function writeHtml(frame, html) {
     if (zoomInput) zoomInput.value = previewZoom;
 }
 
-async function compile(source, preview, frame) {
+async function compile(source, preview, frame, onDiagnostics) {
     const generation = ++currentGeneration;
     try {
         const html = await invoke('render_preview', { source });
@@ -83,9 +83,18 @@ async function compile(source, preview, frame) {
         _lastHtml = html;
         clearError(preview, frame);
         writeHtml(frame, html);
+        onDiagnostics?.([]); // clear markers on success
     } catch (error) {
         if (generation !== currentGeneration) return;
-        showError(preview, frame, String(error));
+        const diagnostics = Array.isArray(error) ? error : [];
+        onDiagnostics?.(diagnostics);
+        const msg = diagnostics.length > 0
+            ? diagnostics.map(d => {
+                // const loc = d.line != null ? ` (ligne ${d.line}, col ${d.column})` : '';
+                return `${d.message}${loc}`;
+              }).join('\n')
+            : String(error);
+        showError(preview, frame, msg);
     }
 }
 
@@ -100,8 +109,8 @@ async function compile(source, preview, frame) {
  * @param {HTMLIFrameElement} opts.frame
  * @param {number}          [opts.debounceMs=100]
  */
-export function initPreview({ getSource, onChange, preview, frame, debounceMs = 100 }) {
-    const run = () => compile(getSource(), preview, frame);
+export function initPreview({ getSource, onChange, preview, frame, debounceMs = 100, onDiagnostics }) {
+    const run = () => compile(getSource(), preview, frame, onDiagnostics);
 
     onChange(() => {
         const autoCompile = document.getElementById('auto-compile');
