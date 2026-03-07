@@ -1,6 +1,6 @@
 # Typst IDE
 
-[Typst Studio](https://gitlab.com/gnoooo/typst_studio), rebuild with Tauri and Rust.
+[Typst Studio](https://gitlab.com/gnoooo/typst_studio), rebuilt with Tauri and Rust.
 Harder. Better. Faster. Stronger.
 
 ![banner](./images/banner.png)
