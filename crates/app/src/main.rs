@@ -55,15 +55,27 @@ async fn open_folder_dialog() -> Option<String> {
 }
 
 /// Creates a new project directory with an optional content in `main.typ` file inside
+/// Add an entry to the history database for this project
 /// Returns the full path of the created project folder
 #[tauri::command]
-async fn create_project(name: String, base_path: String, content: Option<String>) -> Result<String, String> {
+async fn create_project(
+    state: tauri::State<'_, HistoryDbState>,
+    name: String, 
+    base_path: String, 
+    content: Option<String>
+) -> Result<String, String> {
     let project_path = std::path::PathBuf::from(&base_path).join(&name);
     std::fs::create_dir_all(&project_path).map_err(|e| e.to_string())?;
     let typ_path = project_path.join("main.typ");
     if !typ_path.exists() {
         std::fs::write(&typ_path, content.as_deref().unwrap_or("")).map_err(|e| e.to_string())?;
     }
+    // Add an entry to the history database
+    {
+        let conn = state.0.lock().map_err(|e| e.to_string())?;
+        let inserted = history_db::add_entry(&conn, &name, &project_path.to_string_lossy()).map_err(|e| e.to_string())?;
+    }
+    
     Ok(project_path.to_string_lossy().into_owned())
 }
 
@@ -130,7 +142,7 @@ async fn save_file(path: String, content: String) -> Result<(), String> {
 /// Adds a note to the database
 #[tauri::command]
 fn add_note(
-    state: tauri::State<NotesDbState>,
+    state: tauri::State<'_, NotesDbState>,
     title: String,
     content: String,
     scope: String,
@@ -143,21 +155,21 @@ fn add_note(
 
 /// Returns all notes
 #[tauri::command]
-fn get_all_notes(state: tauri::State<NotesDbState>) -> Result<Vec<Note>, String> {
+fn get_all_notes(state: tauri::State<'_, NotesDbState>) -> Result<Vec<Note>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     notes_db::get_all_notes(&conn).map_err(|e| e.to_string())
 }
 
 /// Returns all global notes (not linked to a project)
 #[tauri::command]
-fn get_global_notes(state: tauri::State<NotesDbState>) -> Result<Vec<Note>, String> {
+fn get_global_notes(state: tauri::State<'_, NotesDbState>) -> Result<Vec<Note>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     notes_db::get_global_notes(&conn).map_err(|e| e.to_string())
 }
 
 /// Returns all notes linked to a project path
 #[tauri::command]
-fn get_project_notes(state: tauri::State<NotesDbState>, project_path: String) -> Result<Vec<Note>, String> {
+fn get_project_notes(state: tauri::State<'_, NotesDbState>, project_path: String) -> Result<Vec<Note>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     let project_id = notes_db::project_id_from_path(&project_path);
     notes_db::get_project_notes(&conn, &project_id).map_err(|e| e.to_string())
@@ -171,7 +183,7 @@ fn get_current_project_id(project_path: String) -> String {
 
 /// Deletes a note by its ID
 #[tauri::command]
-fn delete_note(state: tauri::State<NotesDbState>, note_id: String) -> Result<(), String> {
+fn delete_note(state: tauri::State<'_, NotesDbState>, note_id: String) -> Result<(), String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     notes_db::delete_note(&conn, &note_id).map_err(|e| e.to_string())
 }
@@ -179,7 +191,7 @@ fn delete_note(state: tauri::State<NotesDbState>, note_id: String) -> Result<(),
 /// Updates a note by its ID
 #[tauri::command]
 fn update_note(
-    state: tauri::State<NotesDbState>,
+    state: tauri::State<'_, NotesDbState>,
     note_id: String,
     title: String,
     content: String,
@@ -195,26 +207,26 @@ fn update_note(
 /// History DB
 
 #[tauri::command]
-fn add_history_entry(state: tauri::State<HistoryDbState>, name: String, path: String) -> Result<bool, String> {
+fn add_history_entry(state: tauri::State<'_, HistoryDbState>, name: String, path: String) -> Result<bool, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     let inserted = history_db::add_entry(&conn, &name, &path).map_err(|e| e.to_string())?;
     Ok(inserted)
 }
 
 #[tauri::command]
-fn get_history(state: tauri::State<HistoryDbState>) -> Result<Vec<history_db::HistoryEntry>, String> {
+fn get_history(state: tauri::State<'_, HistoryDbState>) -> Result<Vec<history_db::HistoryEntry>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     history_db::get_history(&conn).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-fn delete_history_entry(state: tauri::State<HistoryDbState>, id: String) -> Result<(), String> {
+fn delete_history_entry(state: tauri::State<'_, HistoryDbState>, id: String) -> Result<(), String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     history_db::delete_history_entry(&conn, &id).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
-fn update_history_entry(state: tauri::State<HistoryDbState>, id: String, name: String, path: String) -> Result<(), String> {
+fn update_history_entry(state: tauri::State<'_, HistoryDbState>, id: String, name: String, path: String) -> Result<(), String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     history_db::update_history_entry(&conn, &id, &name, &path).map_err(|e| e.to_string())
 }
@@ -277,10 +289,10 @@ fn main() {
             let data_dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&data_dir)?;
             
-            let db_path = data_dir.join("notes.db");
-            let conn = notes_db::init_db(db_path.to_str().unwrap())
+            let note_db_path = data_dir.join("notes.db");
+            let note_conn = notes_db::init_db(note_db_path.to_str().unwrap())
                 .expect("Failed to initialise notes DB");
-            app.manage(NotesDbState(Mutex::new(conn)));
+            app.manage(NotesDbState(Mutex::new(note_conn)));
 
             let history_db_path = data_dir.join("history.db");
             let history_conn = history_db::init_db(history_db_path.to_str().unwrap())
