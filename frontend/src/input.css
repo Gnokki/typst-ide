@@ -51,8 +51,12 @@
     --scrollbar-thumb: #686868;
 
     /*  Unsaved-blink animation  */
-    --bg-blink:        #8ce0ff;
-    --text-blink:      #00bbff;
+    --bg-unsaved-blink:        #8ce0ff;
+    --text-unsaved-blink:      #00bbff;
+
+    /*  Open project-blink animation  */
+    --bg-open-project-blink:        #ffe48c;
+    --text-open-project-blink:      #ffd500;
 
     /*  Shared tokens (shadows, radii, font stacks)  */
     --shadow-sm:       0 0.8px 1.6px rgba(0, 0, 0, .16);
@@ -94,8 +98,10 @@
     --resize-hover:    #0065a9;
     --scrollbar:       #e0e0e0;
     --scrollbar-thumb: #c0c0c0;
-    --bg-blink:        #8ce0ff;
-    --text-blink:      #00bbff;
+    --bg-unsaved-blink:        #8ce0ff;
+    --text-unsaved-blink:      #00bbff;
+    --bg-open-project-blink:        #ffe48c;
+    --text-open-project-blink:      #ffd500;
 }
 
 /* #################################################################
@@ -325,11 +331,11 @@ html, body {
 @keyframes unsavedBlink {
     0%, 100% {
         background-color: transparent;
-        color: var(--text-blink);
+        color: var(--text-unsaved-blink);
     }
     50% {
-        background-color: var(--bg-blink);
-        border-color: var(--text-blink);
+        background-color: var(--bg-unsaved-blink);
+        border-color: var(--text-unsaved-blink);
         color: #0080af;
     }
 }
@@ -340,6 +346,26 @@ html, body {
 
 #unsaved-btn  { padding: 2px 6px 0 6px; }
 #unsaved-icon { font-size: 19px; text-align: center; margin: 0 auto; }
+
+/*  Open project indicator  */
+@keyframes openProjectBlink {
+    0%, 100% {
+        background-color: transparent;
+        color: var(--text-open-project-blink);
+    }
+    50% {
+        background-color: var(--bg-open-project-blink);
+        border-color: var(--text-open-project-blink);
+        color: #af8300;
+    }
+}
+
+._open-project-blinking       { animation: openProjectBlink 2s infinite; }
+._open-project-blinking:hover { animation-play-state: paused; }
+._open-project-btn-none       { display: none; }
+
+#open-project-btn  { padding: 2px 6px 0 6px; }
+#open-project-icon { font-size: 19px; text-align: center; margin: 0 auto; }
 
 #notepad-btn  { padding: 2px 6px 0 6px; }
 #notepad-icon { font-size: 19px; text-align: center; margin: 0 auto; }
@@ -419,7 +445,80 @@ html, body {
 .theme-toggle input { display: none; }
 
 /* #################################################################
-   7. Notepad Cards
+   7. History Entry Cards
+   ################################################################# */
+.history-entry-btn {
+    border-radius: var(--radius-sm);
+    background-color: var(--btn-tool);
+    border: 1.6px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    width: 100%;
+    margin-top: 6px;
+    padding: 2px 6px;
+    transition: var(--transition-med);
+}
+
+.history-entry-btn:hover { background: var(--btn-tool-hover); }
+
+.history-entry-btn-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: start;
+}
+
+.history-entry-btn-content {
+    font-size: 12px;
+    text-align: start;
+    margin-top: 2px;
+    margin-left: 8px;
+    white-space: pre-wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Shared history-entry-action button base */
+.delete-history-entry-btn,
+.edit-history-entry-btn,
+.view-history-entry-btn {
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    transition: var(--transition-med);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-history-entry-btn { color: var(--error-text); }
+.edit-history-entry-btn   { color: var(--warning-text); }
+.view-history-entry-btn   { color: var(--info-text); }
+
+.delete-history-entry-btn:hover { background-color: var(--error-text);   color: white; }
+.edit-history-entry-btn:hover   { background-color: var(--warning-text); color: white; }
+.view-history-entry-btn:hover   { background-color: var(--info-text);    color: white; }
+
+.delete-history-entry-icon,
+.edit-history-entry-icon,
+.view-history-entry-icon {
+    font-size: 20px;
+}
+
+#history-entry-preview-content {
+    background-color: var(--btn-tool-hover);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-top: 8px;
+    padding: 8px 16px;
+    white-space: pre-wrap;
+    font-size: 13px;
+}
+
+
+/* #################################################################
+   8. Notepad Cards
    ################################################################# */
 .note-btn {
     border-radius: var(--radius-sm);
@@ -491,7 +590,7 @@ html, body {
 }
 
 /* #################################################################
-   8. Output Console
+   9. Output Console
    ################################################################# */
 .output-console {
     background: var(--bg-console);
@@ -547,7 +646,7 @@ html, body {
 .console-content .log-info    { color: var(--text-muted); }
 
 /* #################################################################
-   9. Main Split (Editor + Preview)
+   10. Main Split (Editor + Preview)
    ################################################################# */
 .main-split {
     display: flex;
@@ -643,7 +742,7 @@ html, body {
 }
 
 /* #################################################################
-   10. Toast Notifications
+   12. Toast Notifications
    ################################################################# */
 .toast-container {
     position: fixed;
@@ -690,7 +789,7 @@ html, body {
 }
 
 /* #################################################################
-   11. Modal / Overlay
+   12. Modal / Overlay
    ################################################################# */
 .ide-modal-overlay {
     position: fixed;
@@ -810,7 +909,7 @@ html, body {
 }
 
 /* #################################################################
-   12. Generic Buttons (Modals, etc.)
+   13. Generic Buttons (Modals, etc.)
    ################################################################# */
 .btn {
     padding: 6px 14px;

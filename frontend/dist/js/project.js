@@ -35,16 +35,16 @@ export function getCurrentProject() {
 
 // ## History #######################################################
 
-function addToHistory(project) {
-    projectHistory = projectHistory.filter(p => p.path !== project.path);
-    projectHistory.unshift({ name: project.name, path: project.path, lastOpened: new Date().toISOString() });
-    if (projectHistory.length > 20) projectHistory.length = 20;
-    localStorage.setItem('project-history', JSON.stringify(projectHistory));
-}
+// function addToHistory(project) {
+//     projectHistory = projectHistory.filter(p => p.path !== project.path);
+//     projectHistory.unshift({ name: project.name, path: project.path, lastOpened: new Date().toISOString() });
+//     if (projectHistory.length > 20) projectHistory.length = 20;
+//     localStorage.setItem('project-history', JSON.stringify(projectHistory));
+// }
 
-export function getProjectHistory() {
-    return projectHistory;
-}
+// export function getProjectHistory() {
+//     return projectHistory;
+// }
 
 // ## Save ##########################################################
 
@@ -81,6 +81,17 @@ export function unsavedBtnUpdate() {
         document.getElementById('unsaved-btn')?.classList.remove('_unsaved-btn-none');
     } else {
         document.getElementById('unsaved-btn')?.classList.add('_unsaved-btn-none');
+    }
+}
+
+
+// ## Open indicator ################################################
+export function openProjectBtnUpdate() {
+    // Blink unsaved indicator if the project isn't saved yet
+    if (getCurrentProject() === null){
+        document.getElementById('open-project-btn')?.classList.remove('_open-project-btn-none');
+    } else {
+        document.getElementById('open-project-btn')?.classList.add('_open-project-btn-none');
     }
 }
 
@@ -134,7 +145,7 @@ export async function exportPDF(content) {
  */
 function loadProject(info, setEditorContent) {
     currentProject = { name: info.name, path: info.path, typFile: info.typ_file };
-    addToHistory(currentProject);
+    // addToHistory(currentProject);
 
     // Update UI
     const nameEl = document.getElementById('project-name');

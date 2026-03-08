@@ -101,5 +101,5 @@ Thin wrappers over `std::fs` for reading, writing, creating, deleting, checking 
 | `rusqlite` (bundled) | Embedded SQLite |
 | `uuid` | Note ID generation |
 | `chrono` | RFC 3339 timestamps |
-| `sha2` | Project path → stable ID |
+| `sha2` | Project path = stable ID |
 | `serde` | Serialization of `DiagnosticInfo`, `Note`, `ProjectInfo` |

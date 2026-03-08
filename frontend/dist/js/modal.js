@@ -16,7 +16,7 @@
  *   opts.title, opts.message, opts.confirmLabel, opts.cancelLabel
  *
  * showPrompt(opts) -> Promise<string|null>
- *   opts.title, opts.label, opts.placeholder, opts.validate(v) → string|true
+ *   opts.title, opts.label, opts.placeholder, opts.validate(v) = string|true
  */
 
 // ## Core ####################################################################

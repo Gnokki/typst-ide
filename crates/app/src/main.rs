@@ -5,12 +5,16 @@ use std::sync::Mutex;
 use serde::Serialize;
 use tauri::Manager;
 use typst_ide_core::compiler::{compile_to_preview_html, compile_to_pdf, DiagnosticInfo};
-use typst_ide_core::database::notes_db::{self, Note};
+use typst_ide_core::database::{
+    notes_db::{self, Note},
+    history_db::{self, HistoryEntry}
+};
 
 // ## Database state ############################################################
 
 /// Tauri-managed state for the notes database
 pub struct NotesDbState(pub Mutex<rusqlite::Connection>);
+pub struct HistoryDbState(pub Mutex<rusqlite::Connection>);
 
 /// Tauri-managed state for a second database (example)
 // pub struct OtherDbState(pub Mutex<rusqlite::Connection>);
@@ -115,6 +119,9 @@ async fn save_file(path: String, content: String) -> Result<(), String> {
 // Database
 // ###########################################################################
 
+/// ####################################################
+/// Notes DB
+
 /// Adds a note to the database
 #[tauri::command]
 fn add_note(
@@ -179,6 +186,34 @@ fn update_note(
         .map_err(|e| e.to_string())
 }
 
+/// ####################################################
+/// History DB
+
+#[tauri::command]
+fn add_history_entry(state: tauri::State<HistoryDbState>, name: String, path: String) -> Result<bool, String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    let inserted = history_db::add_entry(&conn, &name, &path).map_err(|e| e.to_string())?;
+    Ok(inserted)
+}
+
+#[tauri::command]
+fn get_history(state: tauri::State<HistoryDbState>) -> Result<Vec<history_db::HistoryEntry>, String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    history_db::get_history(&conn).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn delete_history_entry(state: tauri::State<HistoryDbState>, id: String) -> Result<(), String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    history_db::delete_history_entry(&conn, &id).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn update_history_entry(state: tauri::State<HistoryDbState>, id: String, name: String, path: String) -> Result<(), String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    history_db::update_history_entry(&conn, &id, &name, &path).map_err(|e| e.to_string())
+}
+
 // ###########################################################################
 // PDF export
 // ###########################################################################
@@ -236,10 +271,16 @@ fn main() {
         .setup(|app| {
             let data_dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&data_dir)?;
+            
             let db_path = data_dir.join("notes.db");
             let conn = notes_db::init_db(db_path.to_str().unwrap())
                 .expect("Failed to initialise notes DB");
             app.manage(NotesDbState(Mutex::new(conn)));
+
+            let history_db_path = data_dir.join("history.db");
+            let history_conn = history_db::init_db(history_db_path.to_str().unwrap())
+                .expect("Failed to initialise history DB");
+            app.manage(HistoryDbState(Mutex::new(history_conn)));
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -259,6 +300,11 @@ fn main() {
             get_global_notes,
             get_project_notes,
             get_current_project_id,
+
+            add_history_entry,
+            get_history,
+            delete_history_entry,
+            update_history_entry,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

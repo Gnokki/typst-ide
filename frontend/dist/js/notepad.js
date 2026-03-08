@@ -94,7 +94,6 @@ function insertNote(content) {
 }
 
 async function deleteNote(noteId) {
-    console.log(`Attempting to delete note with ID: ${noteId}`);
     const confirmed = await showConfirm({
         title: 'Supprimer la note',
         message: 'Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible.',
@@ -110,7 +109,6 @@ async function deleteNote(noteId) {
 }
 
 async function editNote(note) {
-    console.log(`Editing note ${note.id} with title "${note.title}" and content "${note.content}"`);
     const body = document.createElement('div');
     body.style.display = 'flex';
     body.style.flexDirection = 'column';
@@ -329,7 +327,5 @@ export async function openNotepad() {
 
 function closeNotepad() {
     const overlay = document.querySelector('.ide-modal-overlay');
-    if (overlay) {
-        overlay.remove();
-    }
+    if (overlay) overlay.remove();
 }

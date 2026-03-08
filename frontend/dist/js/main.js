@@ -7,9 +7,10 @@ import { createEditor, setEditorTheme, zoomIn, zoomOut, zoomReset, getCurrentZoo
 import { initPreview, zoomPreviewIn, zoomPreviewOut, zoomPreviewReset, getPreviewZoom } from './preview.js';
 import { initToolbar, initTheme, writeToConsole, showConsole } from './toolbar.js';
 import { registerShortcuts } from './shortcuts.js';
-import { unsavedBtnUpdate, createNewProject, openProject, exportPDF, scheduleAutosave, notifySaveIndicator } from './project.js';
+import { unsavedBtnUpdate, openProjectBtnUpdate, createNewProject, openProject, exportPDF, scheduleAutosave, notifySaveIndicator } from './project.js';
 import { openModal, showPrompt } from './modal.js';
 import { openNotepad } from './notepad.js';
+import { openHistory } from './history.js';
 
 async function main() {
     if (!window.__TAURI__) {
@@ -84,6 +85,9 @@ async function main() {
     // Save project
     bindMenuAction('unsaved-btn',   () => createNewProject((content) => editor.setValue(content), editor.getValue()));
 
+    // Open history modal
+    bindMenuAction('open-project-btn',   () => openHistory());
+
     // Notepad buttons
     bindMenuAction('notepad-btn', () => { openNotepad(); });
 
@@ -133,6 +137,7 @@ async function main() {
     });
 
     unsavedBtnUpdate();
+    openProjectBtnUpdate();
 
     // TO DELETE : ONLY TO TEST MODALS
     // link bold button to a modal example
