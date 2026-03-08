@@ -106,6 +106,11 @@ async fn open_project(dir_path: String) -> Result<ProjectInfo, String> {
     })
 }
 
+#[tauri::command]
+fn read_file(path: String) -> Result<String, String> {
+    std::fs::read_to_string(path).map_err(|e| e.to_string())
+}
+
 /// Writes `content` to the file at `path`, creating intermediate directories if needed
 #[tauri::command]
 async fn save_file(path: String, content: String) -> Result<(), String> {
@@ -292,6 +297,7 @@ fn main() {
             pick_pdf_path,
             export_pdf,
             font_exists,
+            read_file,
 
             add_note,
             get_all_notes,

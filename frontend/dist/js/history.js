@@ -1,10 +1,13 @@
 
 
 const { invoke } = window.__TAURI__.core;
+const { join } = window.__TAURI__.path;
+
 
 import { openModal, showConfirm } from './modal.js';
 import { getCurrentFontFamily } from './editor.js';
 import { showToast } from './toast.js';
+
 
 async function createHistoryEntry() {
     const body = document.createElement('div');
@@ -110,9 +113,47 @@ async function editHistoryEntry(entry) {
     });
 }
 
-function viewHistoryEntry(entry) {
-    // todo: we have to get the text from the typ file to show a preview
-    showToast("info", "Fonction de preview à venir !");
+async function viewHistoryEntry(entry) {
+    const createdAt = new Date(entry.created_at);
+    const createdAtDate = createdAt.toLocaleDateString("fr-FR", {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    });
+    const createdAtTime = createdAt.toLocaleTimeString("fr-FR", {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+    const updatedAt = new Date(entry.updated_at);
+    const updatedAtDate = updatedAt.toLocaleDateString("fr-FR", {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+    });
+    const updatedAtTime = updatedAt.toLocaleTimeString("fr-FR", {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+    const typ_path = await join(entry.path, 'main.typ');
+    const content = await invoke('read_file', { path: typ_path });
+
+    const body = document.createElement('div');
+    body.innerHTML = `
+<div id="note-preview-metadata">
+    <p>Chemin : ${entry.path}</p>
+    <p>Nom : ${entry.name}</p>
+    <p>Crée le ${createdAtDate} à ${createdAtTime}</p>
+    <p>Dernière modification le ${updatedAtDate} à ${updatedAtTime}</p>
+</div>
+<div id="note-preview-content" style="font-family:${getCurrentFontFamily()};">${content}</div>
+    `;
+    openModal({
+        title: "Aperçu du projet",
+        body: body,
+        width: '75%',
+        buttons: [],
+    });
 }
 
 function openProject(entry) {
