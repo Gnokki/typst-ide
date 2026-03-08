@@ -4,7 +4,32 @@
  *
  * ## API
  *
+ * createNote(scope) -> void
+ *  * scope: 'global' | 'project'
+ *  * Opens the note creation modal
+ *  * If `scope` is provided, it will be the default scope for the new note
+ * 
+ * insertNote(content) -> void
+ *  * content: string of the note to insert
+ *  * Inserts the given content at the current cursor position in the editor
+ * 
+ * deleteNote(noteId) -> void
+ *  * noteId: string ID of the note to delete
+ *  * Deletes the note with the given ID after user confirmation
+ * 
+ * editNote(note) -> void
+ *  * note: { id, title, content, scope, created_at, updated_at }
+ *  * Opens the note editing modal pre-filled with the note's current data
+ * 
+ * viewNote(note) -> void
+ *  * note: { id, title, content, scope, created_at, updated_at }
+ *  * Opens a read-only modal to view the note's content and metadata
+ * 
+ * openNotesList() -> HTMLElement
+ *  * Returns a DOM element containing the list of all notes (both global and project-specific)
+ * 
  * openNotepad() -> void
+ *  * Opens a modal displaying all notes with options to add, edit, delete, and insert them
  */
 const { invoke } = window.__TAURI__.core;
 
