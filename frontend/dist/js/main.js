@@ -24,6 +24,7 @@ async function main() {
     // ## Monaco editor #############################################
     const container = document.getElementById('typst-editor');
     const editor    = await createEditor(container);
+    window.__typstEditor = editor;
 
     initTheme((theme) => setEditorTheme(theme));
 

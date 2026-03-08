@@ -7,6 +7,7 @@ const { join } = window.__TAURI__.path;
 import { openModal, showConfirm } from './modal.js';
 import { getCurrentFontFamily } from './editor.js';
 import { showToast } from './toast.js';
+import { openProjectFromPath } from './project.js';
 
 
 async function createHistoryEntry() {
@@ -156,14 +157,18 @@ async function viewHistoryEntry(entry) {
     });
 }
 
-function openProject(entry) {
-    // todo: we have to get the text from the typ file to open the project
-    showToast("info", "Open project à venir !");
+async function openProject(entry) {
+    await openProjectFromPath(entry.path, (content) => {
+        // setEditorContent is provided by main.js at init — forward via project module
+        const editor = window.__typstEditor;
+        if (editor) editor.setValue(content);
+    });
+    closeHistory();
 }
 
 function attachHistoryEntryListeners(entryEl, entry) {
-    const entryHistoryBtn = entryEl.querySelector(`#${entry.id}`);
-    entryHistoryBtn?.addEventListener('click', () => openProject(entry));
+    const entryHistoryBtn = entryEl.querySelector(`#history-${entry.id}`);
+    entryHistoryBtn?.addEventListener('click', async () => await openProject(entry));
     
     const deleteBtn = entryEl.querySelector('.delete-history-entry-btn');
     deleteBtn?.addEventListener('click', () => deleteHistoryEntry(entry.id));
@@ -183,7 +188,7 @@ async function createHistoryList() {
         entryEl.className = 'history-entry';
         entryEl.innerHTML = `
 <span class="flex gap-2">
-    <button class="history-entry-btn" id="${entry.id}">
+    <button class="history-entry-btn" id="history-${entry.id}">
         <div class="history-entry-btn-title">${entry.name}</div>
         <div class="history-entry-btn-content" style="font-family: ${getCurrentFontFamily()};">${entry.path}</div>
     </button>

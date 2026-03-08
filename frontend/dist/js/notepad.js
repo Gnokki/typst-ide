@@ -196,7 +196,7 @@ function viewNote(note) {
 }
 
 function attachNoteListeners(noteEl, note) {
-    const noteBtn = noteEl.querySelector(`#${note.id}`);
+    const noteBtn = noteEl.querySelector(`#note-${note.id}`);
     noteBtn.addEventListener('click', () => insertNote(note.content));
 
     const deleteBtn = noteEl.querySelector(`#delete-${note.id}`);
@@ -237,7 +237,7 @@ async function createNotesList() {
                 // `;
                 noteEl.innerHTML = `
 <span class="flex gap-2">
-    <button class="note-btn" id="${note.id}">
+    <button class="note-btn" id="note-${note.id}">
         <div class="note-btn-title">${note.title}</div>
         <div class="note-btn-content" style="font-family: ${getCurrentFontFamily()};">${note.content}</div>
     </button>
@@ -277,7 +277,7 @@ async function createNotesList() {
                     // `;
                     noteEl.innerHTML = `
 <span class="flex gap-2">
-    <button class="note-btn" id="${note.id}">
+    <button class="note-btn" id="note-${note.id}">
         <div class="note-btn-title">${note.title}</div>
         <div class="note-btn-content" style="font-family: ${getCurrentFontFamily()};">${note.content}</div>
     </button>

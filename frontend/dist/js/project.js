@@ -213,3 +213,13 @@ export async function openProject(setEditorContent) {
         showToast('error', String(err));
     }
 }
+
+export async function openProjectFromPath(dirPath, setEditorContent) {
+    try {
+        const info = await invoke('open_project', { dirPath });
+        loadProject(info, setEditorContent);
+        showToast('success', `Projet "${info.name}" ouvert.`);
+    } catch (err) {
+        showToast('error', String(err));
+    }
+}
