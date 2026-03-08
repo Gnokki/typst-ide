@@ -89,9 +89,13 @@ export function unsavedBtnUpdate() {
 export function openProjectBtnUpdate() {
     // Blink unsaved indicator if the project isn't saved yet
     if (getCurrentProject() === null){
-        document.getElementById('open-project-btn')?.classList.remove('_open-project-btn-none');
+        // document.getElementById('open-project-btn')?.classList.remove('_open-project-btn-none');
+        document.getElementById('open-project-btn').classList.add("_open-project-blinking");
+        document.getElementById('open-project-btn').classList.add("_open-project-blinking:hover");
     } else {
-        document.getElementById('open-project-btn')?.classList.add('_open-project-btn-none');
+        // document.getElementById('open-project-btn')?.classList.add('_open-project-btn-none');
+        document.getElementById('open-project-btn').classList.remove("_open-project-blinking");
+        document.getElementById('open-project-btn').classList.remove("_open-project-blinking:hover");
     }
 }
 
@@ -157,6 +161,7 @@ function loadProject(info, setEditorContent) {
     setEditorContent(info.content);
     notifyChange();
     unsavedBtnUpdate();
+    openProjectBtnUpdate();
 }
 
 // ## Public API ####################################################
