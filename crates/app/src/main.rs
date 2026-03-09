@@ -295,6 +295,12 @@ fn font_exists(name: String) -> bool {
 // ###########################################################################
 
 fn main() {
+    // WebKitGTK may fail to create a surfaceless EGL display on systems without
+    // proper GPU/EGL support (common in AppImage environments).
+    // Disabling the DMABuf renderer falls back to a software path and fixes the crash.
+    #[cfg(target_os = "linux")]
+    std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
