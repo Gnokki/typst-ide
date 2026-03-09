@@ -295,6 +295,15 @@ fn font_exists(name: String) -> bool {
 // ###########################################################################
 
 fn main() {
+    // On Linux, WebKitGTK may try to use DMABuf/GPU compositing and fail on some systems.
+    // Disable as a secondary defense (the real fix is not bundling Wayland libs in the AppImage).
+    #[cfg(target_os = "linux")]
+    {
+        if std::env::var("WEBKIT_DISABLE_DMABUF_RENDERER").is_err() {
+            std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+        }
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {

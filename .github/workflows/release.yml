@@ -27,20 +27,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # System deps (Linux) 
+      # System deps (Linux)
+      # WebKitGTK is pinned to 2.44.0-2: versions >= 2.46 introduced a DMABuf renderer
+      # that hard-aborts with EGL_BAD_ALLOC when the AppImage runs on non-Ubuntu distros
+      # (Arch, Fedora...) due to ABI mismatch between bundled Wayland libs and system Mesa.
+      # See: https://github.com/tauri-apps/tauri/issues/11994
       - name: Install Linux system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libwebkit2gtk-4.1-dev \
+            libwebkit2gtk-4.1-0=2.44.0-2 \
+            libwebkit2gtk-4.1-dev=2.44.0-2 \
+            libjavascriptcoregtk-4.1-0=2.44.0-2 \
+            libjavascriptcoregtk-4.1-dev=2.44.0-2 \
+            gir1.2-javascriptcoregtk-4.1=2.44.0-2 \
+            gir1.2-webkit2-4.1=2.44.0-2 \
             libgtk-3-dev \
             libayatana-appindicator3-dev \
             librsvg2-dev \
             patchelf \
-            libgl1-mesa-dri \
-            libgl1-mesa-dev \
-            libglu1-mesa \
-            libegl1
+            file
 
       # MinGW cross-compiler + NSIS (for Windows target, built on Linux) 
       - name: Install MinGW + NSIS (Windows cross-compile)
@@ -88,15 +94,6 @@ jobs:
       - name: Build app (Linux AppImage)
         if: matrix.target == 'x86_64-unknown-linux-gnu'
         working-directory: crates/app
-        env:
-          TAURI_BUNDLER_DONT_BUNDLE: >
-            libwebkit2gtk-4.1.so
-            libavif.so
-            libEGL.so
-            libGL.so
-            libGLX.so
-            libgbm.so
-            libdrm.so
         run: NO_STRIP=1 cargo tauri build --target ${{ matrix.target }}
 
       - name: Build app (Windows NSIS)
@@ -104,15 +101,47 @@ jobs:
         working-directory: crates/app
         run: cargo tauri build --target ${{ matrix.target }}
 
-      # Patch AppImage runtime for FUSE3 compatibility (Arch Linux, Fedora, etc.)
-      - name: Replace AppImage runtime with FUSE3-compatible runtime
+      # Patch AppImage: remove bundled Wayland/WPE libs + use FUSE3-compatible runtime
+      # - libwayland-*.so : Ubuntu-built, ABI mismatch with system Mesa/EGL on Arch/Fedora
+      # - libwpe-1.0.so / libWPEBackend-fdo-1.0.so : same issue, causes blank/unclickable window
+      # Removing them forces the AppImage to use the system libs (which match system Mesa/EGL).
+      # This is safe: all distros supported by Tauri v2 have these libs available.
+      # See: https://github.com/tauri-apps/tauri/issues/11994
+      - name: Patch AppImage for cross-distro compatibility
         if: matrix.target == 'x86_64-unknown-linux-gnu'
         run: |
           APPIMAGE=$(find target/${{ matrix.target }}/release/bundle/appimage -name "*.AppImage" | head -1)
-          wget -q "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64" -O /tmp/runtime-fuse3
-          RUNTIME_SIZE=$(wc -c < /tmp/runtime-fuse3)
-          dd if=/tmp/runtime-fuse3 of="$APPIMAGE" bs=1 count=$RUNTIME_SIZE conv=notrunc
-          echo "Patched AppImage runtime: $APPIMAGE"
+          echo "Patching: $APPIMAGE"
+
+          # Extract AppImage contents (no FUSE needed)
+          chmod +x "$APPIMAGE"
+          "$APPIMAGE" --appimage-extract
+
+          # Remove bundled libs that conflict with system Mesa/EGL on non-Ubuntu distros
+          rm -f squashfs-root/usr/lib/libwayland-*.so*
+          rm -f squashfs-root/usr/lib/libwpe-1.0.so*
+          rm -f squashfs-root/usr/lib/libWPEBackend-fdo-1.0.so*
+          echo "Removed conflicting bundled libs"
+
+          # Download FUSE3-compatible runtime (works on Arch, Fedora, Ubuntu...)
+          wget -q "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64" \
+               -O /tmp/runtime-fuse3
+
+          # Download appimagetool to repack
+          wget -q "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" \
+               -O /tmp/appimagetool
+          chmod +x /tmp/appimagetool
+
+          # Repack with the FUSE3 runtime
+          ARCH=x86_64 /tmp/appimagetool \
+            --appimage-extract-and-run \
+            --runtime-file /tmp/runtime-fuse3 \
+            squashfs-root/ \
+            "${APPIMAGE}.patched"
+
+          mv "${APPIMAGE}.patched" "$APPIMAGE"
+          rm -rf squashfs-root
+          echo "Done: $APPIMAGE"
 
       # Upload artifacts 
       - name: Upload artifacts
