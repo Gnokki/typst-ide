@@ -12,7 +12,7 @@ jobs:
       matrix:
         include:
           - target: x86_64-unknown-linux-gnu
-            os: ubuntu-24.04
+            os: ubuntu-22.04
             artifact: "*.AppImage"
             artifact_dir: "bundle/appimage"
 
@@ -89,13 +89,30 @@ jobs:
         if: matrix.target == 'x86_64-unknown-linux-gnu'
         working-directory: crates/app
         env:
-          TAURI_BUNDLER_DONT_BUNDLE: "libEGL.so,libGL.so,libGLX.so,libdrm.so"
+          TAURI_BUNDLER_DONT_BUNDLE: >
+            libwebkit2gtk-4.1.so
+            libavif.so
+            libEGL.so
+            libGL.so
+            libGLX.so
+            libgbm.so
+            libdrm.so
         run: NO_STRIP=1 cargo tauri build --target ${{ matrix.target }}
 
       - name: Build app (Windows NSIS)
         if: matrix.target == 'x86_64-pc-windows-gnu'
         working-directory: crates/app
         run: cargo tauri build --target ${{ matrix.target }}
+
+      # Patch AppImage runtime for FUSE3 compatibility (Arch Linux, Fedora, etc.)
+      - name: Replace AppImage runtime with FUSE3-compatible runtime
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
+        run: |
+          APPIMAGE=$(find target/${{ matrix.target }}/release/bundle/appimage -name "*.AppImage" | head -1)
+          wget -q "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64" -O /tmp/runtime-fuse3
+          RUNTIME_SIZE=$(wc -c < /tmp/runtime-fuse3)
+          dd if=/tmp/runtime-fuse3 of="$APPIMAGE" bs=1 count=$RUNTIME_SIZE conv=notrunc
+          echo "Patched AppImage runtime: $APPIMAGE"
 
       # Upload artifacts 
       - name: Upload artifacts
