@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-22.04
+            artifact: "*.AppImage"
+            artifact_dir: "bundle/appimage"
+
+          - target: x86_64-pc-windows-gnu
+            os: ubuntu-22.04
+            artifact: "*.exe"
+            artifact_dir: "bundle/nsis"
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # System deps (Linux) 
+      - name: Install Linux system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      # MinGW cross-compiler (for Windows target, built on Linux) 
+      - name: Install MinGW (Windows cross-compile)
+        if: matrix.target == 'x86_64-pc-windows-gnu'
+        run: sudo apt-get install -y gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+
+      # Rust 
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> target"
+
+      # Node.js / npm 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      # Tauri build 
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --locked
+
+      - name: Build app (Linux AppImage)
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
+        working-directory: crates/app
+        run: NO_STRIP=1 cargo tauri build --target ${{ matrix.target }}
+
+      - name: Build app (Windows NSIS)
+        if: matrix.target == 'x86_64-pc-windows-gnu'
+        working-directory: crates/app
+        run: cargo tauri build --target ${{ matrix.target }}
+
+      # Upload artifacts 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: typst-ide-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/${{ matrix.artifact_dir }}/${{ matrix.artifact }}
+          if-no-files-found: error
+
+  # Create GitHub Release 
+  release:
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
