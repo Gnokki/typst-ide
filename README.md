@@ -66,12 +66,12 @@ To build the app (into an AppImage for Linux and a setup executable for Windows)
 # Usage
 ## Typical workflow
 When you first open the app, you'll see two windows:
-![First open](./images/walkthrough1.gif)
+![First open](https://raw.githubusercontent.com/gnoooo/typst-ide/refs/heads/main/images/walkthrought1.gif)
 
 On the left, you'll find the editor, where you can write your Typst documents.
 On the right, you'll find the preview, where you can see how your document looks like. You can now start typing your document, and the preview will update automatically as you type.
 
-![Typing](images/walkthrough2.gif)
+![Typing](https://raw.githubusercontent.com/gnoooo/typst-ide/refs/heads/main/images/walkthrought2.gif)
 
 But as you can see, on the top left, there are two buttons blinking:
 - The blue one on the left, will prompt you to create a new project, by entering a name and a path. No worries, what you have typed so far will be saved in the created project.
@@ -82,7 +82,7 @@ When a project is opened, or saved, the buttons will stop blinking (and the proj
 
 As you may have noticed, another button is also visible: the notepad button. This button will open a notepad windows, where you can write snippets of text that you can reuse in your Typst documents.
 
-![Notepad](images/walkthrough3.gif)
+![Notepad](https://raw.githubusercontent.com/gnoooo/typst-ide/refs/heads/main/images/walkthrought3.gif)
 
 ## Notepad
 
