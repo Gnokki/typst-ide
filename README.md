@@ -65,7 +65,34 @@ To build the app (into an AppImage for Linux and a setup executable for Windows)
 
 # Usage
 ## Typical workflow
-TODO: Explain what's going on the first time we open the app...
+When you first open the app, you'll see two windows:
+![First open](images/walkthrough1.gif)
+
+On the left, you'll find the editor, where you can write your Typst documents.
+On the right, you'll find the preview, where you can see how your document looks like. You can now start typing your document, and the preview will update automatically as you type.
+
+![Typing](images/walkthrough2.gif)
+
+But as you can see, on the top left, there are two buttons blinking:
+- The blue one on the left, will prompt you to create a new project, by entering a name and a path. No worries, what you have typed so far will be saved in the created project.
+- The orange one on the right, will prompt you to open an existing project. 
+
+
+When a project is opened, or saved, the buttons will stop blinking (and the project creation button will be hidden), it's just a reminder so you open or create your project, so the auto-save feature works correctly.
+
+As you may have noticed, another button is also visible: the notepad button. This button will open a notepad windows, where you can write snippets of text that you can reuse in your Typst documents.
+
+![Notepad](images/walkthrough3.gif)
+
+## Notepad
+
+The notepad is a simple text editor where you can write snippets of text that you can reuse in your Typst documents.
+
+The notes have to scopes:
+- **Global**: notes that are available across all projects.
+- **Project**: notes that are only available in the current project.
+
+You can delete, edit and preview a entire note using the buttons on the right side of each note.
 
 
 # Philosophy

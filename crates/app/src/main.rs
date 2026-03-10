@@ -1,13 +1,15 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::Mutex;
 use serde::Serialize;
+use std::sync::Mutex;
 use tauri::Manager;
-use typst_ide_core::compiler::{compile_to_preview_html, compile_to_pdf, DiagnosticInfo, PreviewResult};
+use typst_ide_core::compiler::{
+    DiagnosticInfo, PreviewResult, compile_to_pdf, compile_to_preview_html,
+};
 use typst_ide_core::database::{
+    history_db::{self, HistoryEntry},
     notes_db::{self, Note},
-    history_db::{self, HistoryEntry}
 };
 
 // ## Database state ############################################################
@@ -35,18 +37,27 @@ struct CursorPos {
 /// Compiles Typst source code to a preview HTML document (pages rendered as inline SVGs)
 /// Runs on a blocking thread pool to avoid freezing the UI during compilation
 #[tauri::command]
-async fn render_preview(source: String, root: Option<String>, cursor: Option<CursorPos>) -> Result<PreviewResult, Vec<DiagnosticInfo>> {
+async fn render_preview(
+    source: String,
+    root: Option<String>,
+    cursor: Option<CursorPos>,
+) -> Result<PreviewResult, Vec<DiagnosticInfo>> {
     tauri::async_runtime::spawn_blocking(move || {
         let cur = cursor.map(|c| (c.line_number, c.column));
         compile_to_preview_html(root.as_deref(), &source, cur)
     })
-        .await
-        .map_err(|e| vec![DiagnosticInfo {
+    .await
+    .map_err(|e| {
+        vec![DiagnosticInfo {
             severity: "error".into(),
             message: e.to_string(),
             hints: vec![],
-            line: None, column: None, end_line: None, end_column: None,
-        }])?
+            line: None,
+            column: None,
+            end_line: None,
+            end_column: None,
+        }]
+    })?
 }
 
 // ###########################################################################
@@ -72,9 +83,9 @@ async fn open_folder_dialog() -> Option<String> {
 #[tauri::command]
 async fn create_project(
     state: tauri::State<'_, HistoryDbState>,
-    name: String, 
-    base_path: String, 
-    content: Option<String>
+    name: String,
+    base_path: String,
+    content: Option<String>,
 ) -> Result<String, String> {
     let project_path = std::path::PathBuf::from(&base_path).join(&name);
     std::fs::create_dir_all(&project_path).map_err(|e| e.to_string())?;
@@ -85,9 +96,11 @@ async fn create_project(
     // Add an entry to the history database
     {
         let conn = state.0.lock().map_err(|e| e.to_string())?;
-        let inserted = history_db::add_entry(&conn, &name, &project_path.to_string_lossy()).map_err(|e| e.to_string())?;
+        // let inserted = history_db::add_entry(&conn, &name, &project_path.to_string_lossy()).map_err(|e| e.to_string())?;
+        history_db::add_entry(&conn, &name, &project_path.to_string_lossy())
+            .map_err(|e| e.to_string())?;
     }
-    
+
     Ok(project_path.to_string_lossy().into_owned())
 }
 
@@ -181,7 +194,10 @@ fn get_global_notes(state: tauri::State<'_, NotesDbState>) -> Result<Vec<Note>, 
 
 /// Returns all notes linked to a project path
 #[tauri::command]
-fn get_project_notes(state: tauri::State<'_, NotesDbState>, project_path: String) -> Result<Vec<Note>, String> {
+fn get_project_notes(
+    state: tauri::State<'_, NotesDbState>,
+    project_path: String,
+) -> Result<Vec<Note>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     let project_id = notes_db::project_id_from_path(&project_path);
     notes_db::get_project_notes(&conn, &project_id).map_err(|e| e.to_string())
@@ -211,22 +227,35 @@ fn update_note(
     project_id: Option<String>,
 ) -> Result<(), String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
-    notes_db::update_note(&conn, &note_id, &title, &content, &scope, project_id.as_deref())
-        .map_err(|e| e.to_string())
+    notes_db::update_note(
+        &conn,
+        &note_id,
+        &title,
+        &content,
+        &scope,
+        project_id.as_deref(),
+    )
+    .map_err(|e| e.to_string())
 }
 
 /// ####################################################
 /// History DB
 
 #[tauri::command]
-fn add_history_entry(state: tauri::State<'_, HistoryDbState>, name: String, path: String) -> Result<bool, String> {
+fn add_history_entry(
+    state: tauri::State<'_, HistoryDbState>,
+    name: String,
+    path: String,
+) -> Result<bool, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     let inserted = history_db::add_entry(&conn, &name, &path).map_err(|e| e.to_string())?;
     Ok(inserted)
 }
 
 #[tauri::command]
-fn get_history(state: tauri::State<'_, HistoryDbState>) -> Result<Vec<history_db::HistoryEntry>, String> {
+fn get_history(
+    state: tauri::State<'_, HistoryDbState>,
+) -> Result<Vec<history_db::HistoryEntry>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     history_db::get_history(&conn).map_err(|e| e.to_string())
 }
@@ -238,7 +267,12 @@ fn delete_history_entry(state: tauri::State<'_, HistoryDbState>, id: String) -> 
 }
 
 #[tauri::command]
-fn update_history_entry(state: tauri::State<'_, HistoryDbState>, id: String, name: String, path: String) -> Result<(), String> {
+fn update_history_entry(
+    state: tauri::State<'_, HistoryDbState>,
+    id: String,
+    name: String,
+    path: String,
+) -> Result<(), String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     history_db::update_history_entry(&conn, &id, &name, &path).map_err(|e| e.to_string())
 }
@@ -310,7 +344,7 @@ fn main() {
         .setup(|app| {
             let data_dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&data_dir)?;
-            
+
             let note_db_path = data_dir.join("notes.db");
             let note_conn = notes_db::init_db(note_db_path.to_str().unwrap())
                 .expect("Failed to initialise notes DB");
@@ -332,7 +366,6 @@ fn main() {
             export_pdf,
             font_exists,
             read_file,
-
             add_note,
             get_all_notes,
             delete_note,
@@ -340,7 +373,6 @@ fn main() {
             get_global_notes,
             get_project_notes,
             get_current_project_id,
-
             add_history_entry,
             get_history,
             delete_history_entry,
