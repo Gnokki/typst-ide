@@ -66,7 +66,7 @@ To build the app (into an AppImage for Linux and a setup executable for Windows)
 # Usage
 ## Typical workflow
 When you first open the app, you'll see two windows:
-![First open](images/walkthrough1.gif)
+![First open](./images/walkthrough1.gif)
 
 On the left, you'll find the editor, where you can write your Typst documents.
 On the right, you'll find the preview, where you can see how your document looks like. You can now start typing your document, and the preview will update automatically as you type.
