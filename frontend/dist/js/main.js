@@ -4,7 +4,7 @@
  */
 
 import { createEditor, setEditorTheme, zoomIn, zoomOut, zoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily, getEditor } from './editor.js';
-import { initPreview, zoomPreviewIn, zoomPreviewOut, zoomPreviewReset, getPreviewZoom, scrollToJumpPos } from './preview.js';
+import { initPreview, zoomPreviewIn, zoomPreviewOut, zoomPreviewReset, getPreviewZoom, scrollToJumpPos, fitPreviewToWidth } from './preview.js';
 import { initToolbar, initTheme, writeToConsole, showConsole } from './toolbar.js';
 import { registerShortcuts } from './shortcuts.js';
 import { unsavedBtnUpdate, openProjectBtnUpdate, createNewProject, openProject, exportPDF, scheduleAutosave, notifySaveIndicator, getCurrentProject } from './project.js';
@@ -42,6 +42,8 @@ async function main() {
         preview,
         frame,
         onDiagnostics: (diagnostics) => applyMonacoMarkers(editor, diagnostics),
+        autoFit: true,
+        onZoomChange: updateZoomPreview,
     });
 
     // ## Autosave ###################################################
@@ -99,9 +101,9 @@ async function main() {
     bindMenuAction('underline-btn', () => getEditor().getAction('typst-underline')?.run());
 
     // Zoom input fields
-    bindMenuAction("zoom-preview-in-btn",   () => { zoomPreviewIn();    updateZoomPreview(); });
-    bindMenuAction("zoom-preview-out-btn",  () => { zoomPreviewOut();   updateZoomPreview(); });
-    bindMenuAction("zoom-preview-reset-btn",() => { zoomPreviewReset(); updateZoomPreview(); });
+    bindMenuAction("zoom-preview-in-btn",   () => { zoomPreviewIn();                      updateZoomPreview(); });
+    bindMenuAction("zoom-preview-out-btn",  () => { zoomPreviewOut();                     updateZoomPreview(); });
+    bindMenuAction("zoom-preview-reset-btn",() => { fitPreviewToWidth(preview, frame);    updateZoomPreview(); });
 
     // Compile button
     document.getElementById('compile-btn')?.addEventListener('click', () => {

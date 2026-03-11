@@ -87,7 +87,6 @@ When a project is opened, or saved, the buttons will stop blinking (and the proj
 
 As you may have noticed, another button is also visible: the notepad button. This button will open a notepad windows, where you can write snippets of text that you can reuse in your Typst documents.
 
-![Notepad](https://raw.githubusercontent.com/gnoooo/typst-ide/refs/heads/main/images/walkthrought3.gif)
 
 ## Notepad
 

@@ -1,0 +1,17 @@
+{
+  "name": "typst-ide-demo",
+  "version": "1.0.0",
+  "description": "WebdriverIO test suite for generating Typst IDE demo GIFs",
+  "type": "commonjs",
+  "scripts": {
+    "record": "bash scripts/record.sh",
+    "test": "wdio run wdio.conf.js",
+    "convert": "bash scripts/convert.sh"
+  },
+  "devDependencies": {
+    "@wdio/cli": "^8.0.0",
+    "@wdio/local-runner": "^8.0.0",
+    "@wdio/mocha-framework": "^8.0.0",
+    "@wdio/spec-reporter": "^8.0.0"
+  }
+}

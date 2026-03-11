@@ -47,8 +47,17 @@ import { getCurrentProject } from './project.js';
  * @param {HTMLIFrameElement} opts.frame
  * @param {number}          [opts.debounceMs=100]
  */
-export function initPreview({ getSource, onChange, preview, frame, debounceMs = 100, onDiagnostics, getCursor }) {
-    const run = () => compile(getSource(), preview, frame, onDiagnostics, getCursor);
+export function initPreview({ getSource, onChange, preview, frame, debounceMs = 100, onDiagnostics, getCursor, autoFit = true, onZoomChange }) {
+    let firstRender = true;
+
+    const run = async () => {
+        await compile(getSource(), preview, frame, onDiagnostics, getCursor);
+        if (firstRender && autoFit) {
+            firstRender = false;
+            fitPreviewToWidth(preview, frame);
+            onZoomChange?.();
+        }
+    };
 
     onChange(() => {
         const autoCompile = document.getElementById('auto-compile');
@@ -193,7 +202,29 @@ export function zoomPreviewOut()   { setPreviewZoom(previewZoom - 10); }
 export function zoomPreviewReset() { setPreviewZoom(100); }
 export function getPreviewZoom() { return previewZoom; }
 
-function setPreviewZoom(value) {
+/**
+ * Fits the preview zoom so the page fills the available pane width.
+ * Safe to call any time after the first render.
+ */
+export function fitPreviewToWidth(previewEl, frameEl) {
+    const preview = previewEl ?? document.getElementById('preview');
+    const frame   = frameEl   ?? document.getElementById('preview-frame');
+    if (!frame || !preview || !_lastHtml) return;
+
+    // frame.offsetWidth is the content width at the current previewZoom.
+    // Dividing back gives the natural (zoom=100) width in CSS px.
+    const contentWidth = frame.offsetWidth;
+    if (contentWidth === 0) return;
+
+    const naturalWidth = contentWidth / (previewZoom / 100);
+    // Leave a small margin so the page doesn't clip against the scrollbar
+    const available = preview.clientWidth - 16;
+    if (available <= 0) return;
+
+    setPreviewZoom(Math.floor((available / naturalWidth) * 100));
+}
+
+export function setPreviewZoom(value) {
     previewZoom = Math.min(400, Math.max(20, value));
     const frame = document.getElementById('preview-frame');
     const preview = document.getElementById('preview');
