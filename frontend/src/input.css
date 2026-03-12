@@ -6,108 +6,115 @@
    Typst IDE  Application stylesheet
    Dark theme by default, light theme via [data-theme="light"]
    ################################################################### */
-   
+
 /* #################################################################
    1. CSS Custom Properties (Design Tokens)
    ################################################################# */
 :root {
     /*  Surfaces  */
-    --bg:              #1e1e1e;
-    --bg-panel:        #252526;
-    --bg-navbar:       #3c3c3c;
-    --bg-input:        #3c3c3c;
-    --bg-hover:        #2a2d2e;
-    --bg-dropdown:     #252526;
-    --bg-console:      #1a1a1a;
-    --bg-status:       #007acc;
+    --bg: #1e1e1e;
+    --bg-panel: #252526;
+    --bg-navbar: #3c3c3c;
+    --bg-input: #3c3c3c;
+    --bg-hover: #2a2d2e;
+    --bg-dropdown: #252526;
+    --bg-console: #1a1a1a;
+    --bg-status: #007acc;
 
     /*  Borders  */
-    --border:          #474747;
+    --border: #474747;
 
     /*  Text  */
-    --text:            #cccccc;
-    --text-muted:      #858585;
-    --text-navbar:     #cccccc;
+    --text: #cccccc;
+    --text-muted: #858585;
+    --text-navbar: #cccccc;
 
     /*  Accent / Buttons  */
-    --accent:          #0e639c;
-    --accent-hover:    #1177bb;
-    --btn-tool:        #0e639c;
-    --btn-tool-hover:  #1177bb;
+    --accent: #0e639c;
+    --accent-hover: #1177bb;
+    --btn-tool: #0e639c;
+    --btn-tool-hover: #1177bb;
 
     /*  Semantic  */
-    --error-bg:        #3c1f1f;
-    --error-text:      #f48771;
-    --success-text:    #89d185;
-    --warning-text:    #cca700;
-    --info-text:       #75beff;
+    --error-bg: #3c1f1f;
+    --error-text: #f48771;
+    --success-text: #89d185;
+    --warning-text: #cca700;
+    --info-text: #75beff;
 
     /*  Resize handle  */
-    --resize-handle:   #474747;
-    --resize-hover:    #007acc;
+    --resize-handle: #474747;
+    --resize-hover: #007acc;
 
     /*  Scrollbar  */
-    --scrollbar:       #424242;
+    --scrollbar: #424242;
     --scrollbar-thumb: #686868;
 
     /*  Unsaved-blink animation  */
-    --bg-unsaved-blink:        #8ce0ff;
-    --text-unsaved-blink:      #00bbff;
+    --bg-unsaved-blink: #8ce0ff;
+    --text-unsaved-blink: #00bbff;
 
     /*  Open project-blink animation  */
-    --bg-open-project-blink:        #ffe48c;
-    --text-open-project-blink:      #ffd500;
+    --bg-open-project-blink: #ffe48c;
+    --text-open-project-blink: #ffd500;
 
     /*  Shared tokens (shadows, radii, font stacks)  */
-    --shadow-sm:       0 0.8px 1.6px rgba(0, 0, 0, .16);
-    --shadow-md:       0 4px 16px rgba(0, 0, 0, .4);
-    --shadow-lg:       0 8px 32px rgba(0, 0, 0, .5);
-    --shadow-toast:    0 4px 12px rgba(0, 0, 0, .4);
-    --radius-sm:       6px;
-    --radius-md:       8px;
-    --radius-lg:       16px;
-    --font-mono:       'Fira Code', 'Cascadia Code', 'Courier New', monospace;
-    --font-ui:         -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --transition-fast: .15s ease;
-    --transition-med:  .2s ease;
+    --shadow-sm: 0 0.8px 1.6px rgba(0, 0, 0, 0.16);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-toast: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --font-mono: "Fira Code", "Cascadia Code", "Courier New", monospace;
+    --font-ui:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --transition-fast: 0.15s ease;
+    --transition-med: 0.2s ease;
 }
 
 [data-theme="light"] {
-    --bg:              #f3f3f3;
-    --bg-panel:        #ffffff;
-    --bg-navbar:       transparent;
-    --bg-input:        #ffffff;
-    --bg-hover:        #e8e8e8;
-    --bg-dropdown:     #f3f3f3;
-    --bg-console:      #f5f5f5;
-    --bg-status:       #007acc;
-    --border:          #cecece;
-    --text:            #333333;
-    --text-muted:      #717171;
-    --text-navbar:     #333333;
-    --accent:          #e9e9e9;
-    --accent-hover:    #e9e9e9;
-    --btn-tool:        #fdfdfd;
-    --btn-tool-hover:  #e9e9e9;
-    --error-bg:        #fdf2f2;
-    --error-text:      #cd3131;
-    --success-text:    #388a34;
-    --warning-text:    #dfa32c;
-    --info-text:       #0065a9;
-    --resize-handle:   #cecece;
-    --resize-hover:    #0065a9;
-    --scrollbar:       #e0e0e0;
+    --bg: #f3f3f3;
+    --bg-panel: #ffffff;
+    --bg-navbar: transparent;
+    --bg-input: #ffffff;
+    --bg-hover: #e8e8e8;
+    --bg-dropdown: #f3f3f3;
+    --bg-console: #f5f5f5;
+    --bg-status: #007acc;
+    --border: #cecece;
+    --text: #333333;
+    --text-muted: #717171;
+    --text-navbar: #333333;
+    --accent: #e9e9e9;
+    --accent-hover: #e9e9e9;
+    --btn-tool: #fdfdfd;
+    --btn-tool-hover: #e9e9e9;
+    --error-bg: #fdf2f2;
+    --error-text: #cd3131;
+    --success-text: #388a34;
+    --warning-text: #dfa32c;
+    --info-text: #0065a9;
+    --resize-handle: #cecece;
+    --resize-hover: #0065a9;
+    --scrollbar: #e0e0e0;
     --scrollbar-thumb: #c0c0c0;
-    --bg-unsaved-blink:        #8ce0ff;
-    --text-unsaved-blink:      #00bbff;
-    --bg-open-project-blink:        #ffe48c;
-    --text-open-project-blink:      #ffd500;
+    --bg-unsaved-blink: #8ce0ff;
+    --text-unsaved-blink: #00bbff;
+    --bg-open-project-blink: #ffe48c;
+    --text-open-project-blink: #ffd500;
 }
 
 /* #################################################################
    2. Reset & Base
    ################################################################# */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 @font-face {
     font-family: "Inter";
@@ -126,7 +133,8 @@
     font-style: normal;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     overflow: hidden;
     font-family: var(--font-ui);
@@ -135,9 +143,17 @@ html, body {
     color: var(--text);
 }
 
-::-webkit-scrollbar       { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: var(--scrollbar); }
-::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: var(--radius-sm); }
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--scrollbar);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius-sm);
+}
 
 /* #################################################################
    3. App Layout
@@ -199,7 +215,9 @@ html, body {
 /* #################################################################
    5. Dropdown Menus
    ################################################################# */
-.menu-item { position: relative; }
+.menu-item {
+    position: relative;
+}
 
 .menu-trigger {
     background: none;
@@ -232,9 +250,13 @@ html, body {
     padding: 4px 0;
 }
 
-.menu-item.open .dropdown { display: block; }
+.menu-item.open .dropdown {
+    display: block;
+}
 
-.dropdown li { display: flex; }
+.dropdown li {
+    display: flex;
+}
 
 .dropdown li button,
 .dropdown li label.menu-label {
@@ -265,7 +287,7 @@ html, body {
     border: 1px solid var(--border);
     margin-left: auto;
     padding: 0 2px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .dropdown .separator {
@@ -320,7 +342,9 @@ html, body {
     background: var(--btn-tool-hover);
 }
 
-.tool-btn:active { transform: scale(.97); }
+.tool-btn:active {
+    transform: scale(0.97);
+}
 
 .btn-group .tool-btn {
     border: none;
@@ -329,7 +353,8 @@ html, body {
 
 /*  Unsaved indicator  */
 @keyframes unsavedBlink {
-    0%, 100% {
+    0%,
+    100% {
         background-color: transparent;
         color: var(--text-unsaved-blink);
     }
@@ -340,16 +365,29 @@ html, body {
     }
 }
 
-._unsaved-blinking       { animation: unsavedBlink 2s infinite; }
-._unsaved-blinking:hover { animation-play-state: paused; }
-._unsaved-btn-none       { display: none; }
+._unsaved-blinking {
+    animation: unsavedBlink 2s infinite;
+}
+._unsaved-blinking:hover {
+    animation-play-state: paused;
+}
+._unsaved-btn-none {
+    display: none;
+}
 
-#unsaved-btn  { padding: 2px 6px 0 6px; }
-#unsaved-icon { font-size: 19px; text-align: center; margin: 0 auto; }
+#unsaved-btn {
+    padding: 2px 6px 0 6px;
+}
+#unsaved-icon {
+    font-size: 19px;
+    text-align: center;
+    margin: 0 auto;
+}
 
 /*  Open project indicator  */
 @keyframes openProjectBlink {
-    0%, 100% {
+    0%,
+    100% {
         background-color: transparent;
         color: var(--text-open-project-blink);
     }
@@ -360,15 +398,33 @@ html, body {
     }
 }
 
-._open-project-blinking       { animation: openProjectBlink 2s infinite; }
-._open-project-blinking:hover { animation-play-state: paused; }
-._open-project-btn-none       { display: none; }
+._open-project-blinking {
+    animation: openProjectBlink 2s infinite;
+}
+._open-project-blinking:hover {
+    animation-play-state: paused;
+}
+._open-project-btn-none {
+    display: none;
+}
 
-#open-project-btn  { padding: 2px 6px 0 6px; }
-#open-project-icon { font-size: 19px; text-align: center; margin: 0 auto; }
+#open-project-btn {
+    padding: 2px 6px 0 6px;
+}
+#open-project-icon {
+    font-size: 19px;
+    text-align: center;
+    margin: 0 auto;
+}
 
-#notepad-btn  { padding: 2px 6px 0 6px; }
-#notepad-icon { font-size: 19px; text-align: center; margin: 0 auto; }
+#notepad-btn {
+    padding: 2px 6px 0 6px;
+}
+#notepad-icon {
+    font-size: 19px;
+    text-align: center;
+    margin: 0 auto;
+}
 
 /*  Bold / Italic / Underline group  */
 #bold-btn {
@@ -425,13 +481,22 @@ html, body {
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
-#zoom-preview-input { text-align: center; }
-#zoom-display       { padding: 0 0.8vw; }
+#zoom-preview-input {
+    text-align: center;
+}
+#zoom-display {
+    padding: 0 0.8vw;
+}
 
 /* Hide number spinners */
 #zoom-preview-input::-webkit-outer-spin-button,
-#zoom-preview-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-#zoom-preview-input[type=number] { -moz-appearance: textfield; }
+#zoom-preview-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#zoom-preview-input[type="number"] {
+    -moz-appearance: textfield;
+}
 
 /*  Theme toggle  */
 .theme-toggle {
@@ -442,7 +507,9 @@ html, body {
     font-size: 14px;
 }
 
-.theme-toggle input { display: none; }
+.theme-toggle input {
+    display: none;
+}
 
 /* #################################################################
    7. History Entry Cards
@@ -461,7 +528,9 @@ html, body {
     overflow: hidden;
 }
 
-.history-entry-btn:hover { background: var(--btn-tool-hover); }
+.history-entry-btn:hover {
+    background: var(--btn-tool-hover);
+}
 
 .history-entry-btn-title {
     font-size: 16px;
@@ -500,13 +569,28 @@ html, body {
     justify-content: center;
 }
 
-.delete-history-entry-btn { color: var(--error-text); }
-.edit-history-entry-btn   { color: var(--warning-text); }
-.view-history-entry-btn   { color: var(--info-text); }
+.delete-history-entry-btn {
+    color: var(--error-text);
+}
+.edit-history-entry-btn {
+    color: var(--warning-text);
+}
+.view-history-entry-btn {
+    color: var(--info-text);
+}
 
-.delete-history-entry-btn:hover { background-color: var(--error-text);   color: white; }
-.edit-history-entry-btn:hover   { background-color: var(--warning-text); color: white; }
-.view-history-entry-btn:hover   { background-color: var(--info-text);    color: white; }
+.delete-history-entry-btn:hover {
+    background-color: var(--error-text);
+    color: white;
+}
+.edit-history-entry-btn:hover {
+    background-color: var(--warning-text);
+    color: white;
+}
+.view-history-entry-btn:hover {
+    background-color: var(--info-text);
+    color: white;
+}
 
 .delete-history-entry-icon,
 .edit-history-entry-icon,
@@ -524,7 +608,6 @@ html, body {
     font-size: 13px;
 }
 
-
 /* #################################################################
    8. Notepad Cards
    ################################################################# */
@@ -540,7 +623,9 @@ html, body {
     transition: var(--transition-med);
 }
 
-.note-btn:hover { background: var(--btn-tool-hover); }
+.note-btn:hover {
+    background: var(--btn-tool-hover);
+}
 
 .note-btn-title {
     font-size: 16px;
@@ -573,13 +658,28 @@ html, body {
     justify-content: center;
 }
 
-.delete-note-btn { color: var(--error-text); }
-.edit-note-btn   { color: var(--warning-text); }
-.view-note-btn   { color: var(--info-text); }
+.delete-note-btn {
+    color: var(--error-text);
+}
+.edit-note-btn {
+    color: var(--warning-text);
+}
+.view-note-btn {
+    color: var(--info-text);
+}
 
-.delete-note-btn:hover { background-color: var(--error-text);   color: white; }
-.edit-note-btn:hover   { background-color: var(--warning-text); color: white; }
-.view-note-btn:hover   { background-color: var(--info-text);    color: white; }
+.delete-note-btn:hover {
+    background-color: var(--error-text);
+    color: white;
+}
+.edit-note-btn:hover {
+    background-color: var(--warning-text);
+    color: white;
+}
+.view-note-btn:hover {
+    background-color: var(--info-text);
+    color: white;
+}
 
 .delete-note-icon,
 .edit-note-icon,
@@ -636,7 +736,9 @@ html, body {
     padding: 0 4px;
 }
 
-.console-header button:hover { color: var(--text); }
+.console-header button:hover {
+    color: var(--text);
+}
 
 .console-content {
     flex: 1;
@@ -649,9 +751,15 @@ html, body {
     word-break: break-all;
 }
 
-.console-content .log-success { color: var(--success-text); }
-.console-content .log-error   { color: var(--error-text); }
-.console-content .log-info    { color: var(--text-muted); }
+.console-content .log-success {
+    color: var(--success-text);
+}
+.console-content .log-error {
+    color: var(--error-text);
+}
+.console-content .log-info {
+    color: var(--text-muted);
+}
 
 /* #################################################################
    10. Main Split (Editor + Preview)
@@ -671,8 +779,12 @@ html, body {
     overflow: hidden;
 }
 
-.editor-pane  { flex: 1 1 50%; }
-.preview-pane { flex: 1 1 50%; }
+.editor-pane {
+    flex: 1 1 50%;
+}
+.preview-pane {
+    flex: 1 1 50%;
+}
 
 .pane-header {
     display: flex;
@@ -777,19 +889,43 @@ html, body {
     color: #fff;
 }
 
-.toast.success { background: #1e4d24; border-left: 3px solid var(--success-text); }
-.toast.error   { background: #4d1e1e; border-left: 3px solid var(--error-text); }
-.toast.warning { background: #4d3d1e; border-left: 3px solid var(--warning-text); }
-.toast.info    { background: #1e344d; border-left: 3px solid var(--info-text); }
+.toast.success {
+    background: #1e4d24;
+    border-left: 3px solid var(--success-text);
+}
+.toast.error {
+    background: #4d1e1e;
+    border-left: 3px solid var(--error-text);
+}
+.toast.warning {
+    background: #4d3d1e;
+    border-left: 3px solid var(--warning-text);
+}
+.toast.info {
+    background: #1e344d;
+    border-left: 3px solid var(--info-text);
+}
 
 @keyframes toastIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes toastOut {
-    from { opacity: 1; transform: translateY(0); }
-    to   { opacity: 0; transform: translateY(10px); }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px);
+    }
 }
 
 .toast.removing {
@@ -802,7 +938,7 @@ html, body {
 .ide-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, .6);
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -811,7 +947,9 @@ html, body {
     transition: opacity 150ms ease;
 }
 
-.ide-modal-overlay--visible { opacity: 1; }
+.ide-modal-overlay--visible {
+    opacity: 1;
+}
 
 .ide-modal {
     background: var(--bg-panel);
@@ -828,7 +966,9 @@ html, body {
     transition: transform 150ms ease;
 }
 
-.ide-modal-overlay--visible .ide-modal { transform: translateY(0); }
+.ide-modal-overlay--visible .ide-modal {
+    transform: translateY(0);
+}
 
 .ide-modal-header {
     display: flex;
@@ -899,7 +1039,9 @@ html, body {
     width: 100%;
 }
 
-.ide-modal-input:focus { border-color: var(--accent); }
+.ide-modal-input:focus {
+    border-color: var(--accent);
+}
 
 .ide-modal-error {
     color: var(--error-text);
@@ -933,7 +1075,9 @@ html, body {
     color: #fff;
 }
 
-.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
 
 .btn-secondary {
     background: var(--bg-input);
@@ -941,4 +1085,6 @@ html, body {
     border: 1px solid var(--border);
 }
 
-.btn-secondary:hover { background: var(--bg-hover); }
+.btn-secondary:hover {
+    background: var(--bg-hover);
+}
