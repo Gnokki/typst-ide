@@ -310,6 +310,16 @@ async fn export_pdf(source: String, path: String, root: Option<String>) -> Resul
     .map_err(|e| e.to_string())?
 }
 // ###########################################################################
+// WebView zoom
+// ###########################################################################
+
+/// Sets the WebView zoom factor (1.0 = 100%, 1.5 = 150%, etc.)
+#[tauri::command]
+fn set_webview_zoom(window: tauri::WebviewWindow, factor: f64) -> Result<(), String> {
+    window.set_zoom(factor).map_err(|e| e.to_string())
+}
+
+// ###########################################################################
 // Fonts
 // ###########################################################################
 
@@ -365,6 +375,7 @@ fn main() {
             pick_pdf_path,
             export_pdf,
             font_exists,
+            set_webview_zoom,
             read_file,
             add_note,
             get_all_notes,

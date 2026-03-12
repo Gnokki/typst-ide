@@ -81,19 +81,19 @@ export function setEditorFontFamily(fontFamily) {
 }
 
 // ## Zoom controls ##################################################
-export function zoomIn() {
+export function editorZoomIn() {
     if (_currentSize >= MAX_FONT_SIZE) return;
     _currentSize += ZOOM_STEP;
     _applySize();
 }
 
-export function zoomOut() {
+export function editorZoomOut() {
     if (_currentSize <= MIN_FONT_SIZE) return;
     _currentSize -= ZOOM_STEP;
     _applySize();
 }
 
-export function zoomReset() {
+export function editorZoomReset() {
     _currentSize = DEFAULT_FONT_SIZE;
     _applySize();
 }
