@@ -9,6 +9,7 @@
  */
 
 import { showToast } from './toast.js';
+import { setBtnIcon } from './structures.js';
 
 // ## Dropdown behaviour ############################################
 
@@ -48,7 +49,10 @@ function initDropdowns() {
 }
 
 function closeAll() {
-    document.querySelectorAll('.menu-item.open').forEach(i => i.classList.remove('open'));
+  document.querySelectorAll('.menu-item.open').forEach(i => {
+    i.classList.remove('open')
+    if (i.id === "structures-menu") setBtnIcon(false);
+  });
 }
 
 /** Close all dropdowns and optionally re-focus the editor */
@@ -120,7 +124,7 @@ export function writeToConsole(type, text) {
     while (el.children.length > MAX_LOG_ENTRIES){
         el.removeChild(el.firstChild);
     }
-    
+
     const line = document.createElement('div');
     line.className = `log-${type}`;
     line.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;

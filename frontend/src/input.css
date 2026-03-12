@@ -451,6 +451,26 @@ body {
     border-bottom: 1px solid var(--border);
 }
 
+#structures-btn {
+    font-size: 15px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--btn-tool);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 6px;
+}
+#structures-btn-icon {
+    font-size: 18px;
+    margin-right: -6px;
+    transition: 0.2s;
+}
+
+.structure-btn-icon-rotate {
+    transform: rotate(90deg);
+}
+
 /*  Zoom panel  */
 #preview-zoom-panel {
     font-weight: 500;

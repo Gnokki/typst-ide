@@ -3,52 +3,16 @@
  *  wires all modules together
  */
 
-import {
-  createEditor,
-  setEditorTheme,
-  editorZoomIn,
-  editorZoomOut,
-  editorZoomReset,
-  getCurrentZoomPct,
-  getCurrentFontFamily,
-  setEditorFontFamily,
-  getEditor,
-} from "./editor.js";
-import {
-  initPreview,
-  zoomPreviewIn,
-  zoomPreviewOut,
-  zoomPreviewReset,
-  getPreviewZoom,
-  scrollToJumpPos,
-  fitPreviewToWidth,
-} from "./preview.js";
-import {
-  initToolbar,
-  initTheme,
-  writeToConsole,
-  showConsole,
-} from "./toolbar.js";
+import { createEditor, setEditorTheme, editorZoomIn, editorZoomOut, editorZoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily, getEditor } from "./editor.js";
+import { initPreview, zoomPreviewIn, zoomPreviewOut, zoomPreviewReset, getPreviewZoom, scrollToJumpPos, fitPreviewToWidth } from "./preview.js";
+import { initWebviewZoom, webviewZoomIn, webviewZoomOut, webviewZoomReset } from "./webview-zoom.js";
+import { initToolbar, initTheme, writeToConsole, showConsole } from "./toolbar.js";
 import { registerShortcuts } from "./shortcuts.js";
-import {
-  unsavedBtnUpdate,
-  openProjectBtnUpdate,
-  createNewProject,
-  openProject,
-  exportPDF,
-  scheduleAutosave,
-  notifySaveIndicator,
-  getCurrentProject,
-} from "./project.js";
+import { unsavedBtnUpdate, openProjectBtnUpdate, createNewProject, openProject, exportPDF, scheduleAutosave, notifySaveIndicator, getCurrentProject } from "./project.js";
 import { openModal, showPrompt } from "./modal.js";
 import { openNotepad } from "./notepad.js";
 import { openHistory } from "./history.js";
-import {
-  initWebviewZoom,
-  webviewZoomIn,
-  webviewZoomOut,
-  webviewZoomReset,
-} from "./webview-zoom.js";
+import { updateBtn, toggleBtnIcon } from "./structures.js";
 
 async function main() {
   if (!window.__TAURI__) {
@@ -165,6 +129,10 @@ async function main() {
     getEditor().getAction("typst-underline")?.run(),
   );
 
+  // Structure button...
+  updateBtn();
+  bindMenuAction("structures-btn", () => toggleBtnIcon());
+
   // Zoom input fields
   bindMenuAction("zoom-preview-in-btn", () => {
     zoomPreviewIn();
@@ -199,9 +167,7 @@ async function main() {
   }
 
   // Change editor font family
-  document
-    .getElementById("editor-fontfamily-btn")
-    ?.addEventListener("click", async () => {
+  document.getElementById("editor-fontfamily-btn")?.addEventListener("click", async () => {
       const { invoke } = window.__TAURI__.core;
       const current = getCurrentFontFamily();
       const newFont = await showPrompt({
@@ -214,7 +180,10 @@ async function main() {
           return exists || `Police "${v}" introuvable sur cette machine.`;
         },
       });
-      if (newFont !== null) setEditorFontFamily(newFont);
+      if (newFont !== null) {
+        setEditorFontFamily(newFont);
+        updateBtn();
+      }
     });
 
   unsavedBtnUpdate();
@@ -238,6 +207,10 @@ async function main() {
   //         });
   //     });
   // });
+
+  document.addEventListener("click", (e) => {
+    updateBtn();
+  });
 }
 
 // ## Helpers #######################################################

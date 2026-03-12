@@ -206,34 +206,15 @@
                             </li>
                             <li class="separator"></li>
                             <li>
-                                <button
-                                    onclick="
-                                        window.__TAURI__.opener.openUrl(
-                                            'https://typst.app/docs/',
-                                        )
-                                    "
-                                >
+                                <button onclick="window.__TAURI__.opener.openUrl('https://typst.app/docs/')">
                                     Documentation Typst
-                                    <span
-                                        class="material-symbols-outlined"
-                                        style="font-size: 16px"
-                                        >open_in_new</span
-                                    >
+                                    <span class="material-symbols-outlined" style="font-size: 16px">open_in_new</span>
                                 </button>
                             </li>
                             <li>
-                                <button
-                                    onclick="
-                                        window.__TAURI__.opener.openUrl(
-                                            'https://gitlab.com/gnoooo/typst-ide',
-                                        )
-                                    "
-                                >
-                                    Repo officiel de Typst IDE<span
-                                        class="material-symbols-outlined"
-                                        style="font-size: 16px"
-                                        >open_in_new</span
-                                    >
+                                <button onclick="window.__TAURI__.opener.openUrl('https://gitlab.com/gnoooo/typst-ide')">
+                                    Repo officiel de Typst IDE
+                                    <span class="material-symbols-outlined" style="font-size: 16px">open_in_new</span>
                                 </button>
                             </li>
                         </ul>
@@ -275,13 +256,23 @@
                         </button>
                     </span>
 
-                    <div
-                        class="btn-group flex justify-start"
-                        id="text-formatting-panel"
-                    >
+                    <div class="btn-group flex justify-start" id="text-formatting-panel">
                         <button class="tool-btn" id="bold-btn">B</button>
                         <button class="tool-btn" id="italic-btn">I</button>
                         <button class="tool-btn" id="underline-btn">U</button>
+                    </div>
+                    <div class="menu-item" id="structures-menu">
+                        <button class="tool-btn menu-trigger" id="structures-btn">
+                            #
+                            <span class="material-symbols-outlined" id="structures-btn-icon">chevron_right</span>
+                        </button>
+                        <ul class="dropdown" id="structures-dropdown">
+                            <li><button title="Tableau">#table</button></li>
+                            <li><button title="Grille pour placer les éléments">#grid</button></li>
+                            <li><button title="Rectangle">#rect</button></li>
+                            <li><button title="Image avec légende">#figure</button></li>
+
+                        </ul>
                     </div>
                 </span>
 
@@ -289,11 +280,7 @@
                     <button class="tool-btn" id="zoom-preview-out-btn">
                         -
                     </button>
-                    <span
-                        class="flex items-center text-align-center"
-                        id="zoom-display"
-                    >
-                        <!-- weird instructions to remove increment and decrement arrows -->
+                    <span class="flex items-center text-align-center" ²id="zoom-display">
                         <input
                             class="w-8"
                             id="zoom-preview-input"
@@ -326,14 +313,7 @@
             <!-- ## Main split ########################################### -->
             <div class="main-split" id="main-split">
                 <div class="pane editor-pane" id="editor-pane">
-                    <!-- <div class="pane-header">
-                <span id="project-name" class="project-name">&#8212; Aucun projet &#8212;</span>
-                <span id="save-indicator" class="save-indicator" title="Sauvegard&eacute;">Save</span>
-            </div> -->
-                    <!-- <div class="mockup-window bg-base-100 border border-base-300"> -->
                     <div id="typst-editor" class="editor-container"></div>
-
-                    <!-- </div> -->
                 </div>
 
                 <div class="resize-handle" id="resize-handle"></div>
