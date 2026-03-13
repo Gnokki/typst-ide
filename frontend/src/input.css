@@ -484,6 +484,15 @@ body {
 .structures-dropdown-item button {
     transition: 0.2s
 }
+.structures-input-label {
+    font-size: 1.05em;
+    font-weight: 500;
+}
+#structures-grid-modal div input {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding-inline: 4px;
+}
 
 
 
