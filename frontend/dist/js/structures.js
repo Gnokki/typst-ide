@@ -164,6 +164,114 @@ export const STRUCT_ELEMENTS = [
     content: '#grid',
     classes: '',
     title: 'Grille pour placer les éléments',
+    openModal: () => {
+      const body = document.createElement('div');
+      body.innerHTML = `
+<div>
+  <p class="structures-input-label">Dimensions</p>
+  <span class="flex items-center">
+    <input
+      id="structures-grid-input-cols"
+      type="number"
+      placeholder="cols"
+      min="1"
+      style="width:20%;margin-bottom:0.5rem;padding:0.5rem;font-size:1rem;"
+    />
+    <span class="material-symbols-outlined" style="font-size:1rem;">close</span>
+    <input
+      id="structures-grid-input-rows"
+      type="number"
+      placeholder="rows"
+      min="1"
+      style="width:20%;margin-bottom:0.5rem;padding:0.5rem;font-size:1rem;"
+    />
+  </span>
+
+  <p class="structures-input-label">Marge intérieure</p>
+  <input
+    id="structures-grid-input-inset"
+    type="number"
+    placeholder="inset"
+    min="0"
+    style="width:20%;margin-bottom:0.5rem;padding:0.5rem;font-size:1rem;"
+  />
+
+  <p class="structures-input-label">Alignement horizontal</p>
+  <select
+    id="structures-grid-input-horizontal-align"
+    style="width:20%;margin-bottom:0.5rem;padding:0.1rem;font-size:1rem;"
+  >
+    <option value="left">left</option>
+    <option value="center">center</option>
+    <option value="right">right</option>
+  </select>
+
+  <p class="structures-input-label">Alignement vertical</p>
+  <select
+    id="structures-grid-input-vertical-align"
+    style="width:20%;margin-bottom:0.5rem;padding:0.1rem;font-size:1rem;"
+  >
+    <option value="top">top</option>
+    <option value="horizon">horizon</option>
+    <option value="bottom">bottom</option>
+  </select>
+
+  <p
+    onclick="window.__TAURI__.opener.openUrl('https://typst.app/docs/reference/layout/grid/')"
+    style="cursor:pointer;color:var(--color-link);text-decoration: underline;display:flex;width:fit-content;"
+  >More information...</p>
+</div>
+      `;
+      openModal({
+        title: 'Insérer une grille',
+        body: body,
+        buttons: [
+          {
+            label: 'Insérer',
+            primary: true,
+            onClick: () => {
+              // get all values from the form
+              const cols = parseInt(document.getElementById('structures-grid-input-cols').value);
+              const rows = parseInt(document.getElementById('structures-grid-input-rows').value);
+              const inset = document.getElementById('structures-grid-input-inset').value;
+              const horizontalalign = document.getElementById('structures-grid-input-horizontal-align').value;
+              const verticalalign = document.getElementById('structures-grid-input-vertical-align').value;
+
+              // create the typst code
+              const cols_code = cols ? `\tcolumns: ${cols},\n` : '';
+              const rows_code = rows ? `\trows: ${rows},\n` : '';
+              const inset_code = inset ? `\tinset: ${inset}pt,\n` : '';
+              const align_code = horizontalalign || verticalalign ? `\talign: ${horizontalalign}+${verticalalign},\n` : '';
+
+
+              let cells = "";
+              for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                  if (j === 0 && i === 0) cells += `\n\t`;
+                  cells += `[],`;
+                }
+                cells += `\n`;
+                if (i !== cols - 1) cells += `\t`;
+              }
+              const typst_code = `#grid(\n${cols_code}${rows_code}${inset_code}${align_code}${cells})\n`;
+              const editor = getEditor();
+              if (editor) {
+                  const selection = editor.getSelection();
+                  if (selection) {
+                      editor.executeEdits(null, [
+                          {
+                              range: selection,
+                              text: typst_code,
+                              // forceMoveMarkers: true
+                          }
+                      ]);
+                  }
+              }
+            },
+          }
+        ],
+      });
+    },
   },
   {
     id: 'rect',
