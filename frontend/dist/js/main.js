@@ -12,7 +12,7 @@ import { unsavedBtnUpdate, openProjectBtnUpdate, createNewProject, openProject, 
 import { openModal, showPrompt } from "./modal.js";
 import { openNotepad } from "./notepad.js";
 import { openHistory } from "./history.js";
-import { updateBtn, toggleBtnIcon } from "./structures.js";
+import { updateBtn, toggleBtnIcon, populateStructureDropdown } from "./structures.js";
 
 async function main() {
   if (!window.__TAURI__) {
@@ -131,7 +131,8 @@ async function main() {
 
   // Structure button...
   updateBtn();
-  bindMenuAction("structures-btn", () => toggleBtnIcon());
+  // bindMenuAction("structures-btn", () => toggleBtnIcon()); // géré dans toolbar (partie des dropdowns)
+  populateStructureDropdown();
 
   // Zoom input fields
   bindMenuAction("zoom-preview-in-btn", () => {

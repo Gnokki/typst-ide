@@ -30,7 +30,10 @@ function initDropdowns() {
             e.stopPropagation();
             const isOpen = item.classList.contains('open');
             closeAll();
-            if (!isOpen) item.classList.add('open');
+          if (!isOpen) {
+            item.classList.add('open');
+            if (item.id === "structures-menu") setBtnIcon(true);
+          };
         });
 
         // If the mouse moves to another menu item while one is open, switch immediately
@@ -51,7 +54,7 @@ function initDropdowns() {
 function closeAll() {
   document.querySelectorAll('.menu-item.open').forEach(i => {
     i.classList.remove('open')
-    if (i.id === "structures-menu") setBtnIcon(false);
+      if (i.id === "structures-menu") setBtnIcon(false);
   });
 }
 

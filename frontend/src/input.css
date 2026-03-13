@@ -58,6 +58,9 @@
     --bg-open-project-blink: #ffe48c;
     --text-open-project-blink: #ffd500;
 
+    /*  Link color  */
+    --color-link: #007acc;
+
     /*  Shared tokens (shadows, radii, font stacks)  */
     --shadow-sm: 0 0.8px 1.6px rgba(0, 0, 0, 0.16);
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
@@ -466,10 +469,23 @@ body {
     margin-right: -6px;
     transition: 0.2s;
 }
-
-.structure-btn-icon-rotate {
+.structures-btn-icon-rotate {
     transform: rotate(90deg);
 }
+.menu-item .dropdown .structures-dropdown-item button {
+    font-weight: 600;
+    background: rgba(1,1,1,0.05);
+    margin: 3px 6px;
+    border-radius: 4px;
+}
+.menu-item .dropdown .structures-dropdown-item button:hover {
+    background: rgba(1,1,1,0.1);
+}
+.structures-dropdown-item button {
+    transition: 0.2s
+}
+
+
 
 /*  Zoom panel  */
 #preview-zoom-panel {
