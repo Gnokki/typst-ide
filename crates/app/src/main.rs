@@ -4,11 +4,9 @@
 use serde::Serialize;
 use std::sync::Mutex;
 use tauri::Manager;
-use typst_ide_core::compiler::{
-    DiagnosticInfo, PreviewResult, compile_to_pdf, compile_to_preview_html,
-};
+use typst_ide_core::compiler::{DiagnosticInfo, PreviewResult, compile_to_pdf, compile_to_preview_html};
 use typst_ide_core::database::{
-    history_db::{self, HistoryEntry},
+    history_db::{self},
     notes_db::{self, Note},
 };
 

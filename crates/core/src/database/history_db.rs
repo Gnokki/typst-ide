@@ -1,5 +1,3 @@
-use std::path;
-
 use rusqlite::{Connection, Result};
 use uuid::Uuid;
 use serde::Serialize;
