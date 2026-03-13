@@ -7,6 +7,7 @@
 
 import { getCurrentFontFamily, getEditor } from './editor'
 import { openModal } from './modal';
+import { showToast } from './toast';
 
 export const STRUCT_ELEMENTS = [
   {
@@ -519,6 +520,19 @@ export const STRUCT_ELEMENTS = [
     content: '#figure',
     classes: '',
     title: 'Image avec légende',
+    openModal: () => {
+      const body = document.createElement('div');
+      body.innerHTML = `
+        <div id="structures-rect-modal">
+          <p class="structures-input-label">Non implémenté</p>
+        </div>
+      `;
+      openModal({
+        title: 'Image avec légende',
+        body: body,
+        buttons: [],
+      });
+    }
   },
 ];
 
