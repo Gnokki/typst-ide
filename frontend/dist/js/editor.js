@@ -56,6 +56,46 @@ export function createEditor(container) {
     });
 }
 
+export function handleImagePaste(event) {
+  const items = event.clipboardData?.items;
+  if (!items) return;
+
+  for (const item of items) {
+    if (item.type.startsWith("image/")) {
+      event.preventDefault();
+
+      const blob = item.getAsFile();
+      if (!blob) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        insertImageAtCursor(dataUrl);
+      };
+
+      reader.readAsDataURL(blob);
+    }
+  }
+}
+
+function insertImageAtCursor(dataUrl) {
+  if (!_editor) return;
+
+  const selection = _editor.getSelection();
+  const position = selection ? selection.getStartPosition() : _editor.getModel()?.getFullModelRange().getEndPosition();
+
+  if (!position) return;
+
+  const typstSyntax = `#image("${dataUrl}", width: 100%)`;
+
+  _editor.executeEdits('paste-image', [
+    {
+      range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+      text: typstSyntax,
+    }
+  ]);
+}
+
 /**
  * Switch Monaco between dark and light themes
  * @param {'dark'|'light'} theme

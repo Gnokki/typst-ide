@@ -1,269 +1,345 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" data-theme="light">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Typst IDE</title>
-    <!-- <link rel="stylesheet" href="css/app.css"> -->
-  <script type="module" crossorigin src="/assets/index-B2JtSIay.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DuoYYjzW.css">
-</head>
-<body>
-<div class="app-layout">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Typst IDE</title>
+        <!-- <link rel="stylesheet" href="css/app.css"> -->
+      <script type="module" crossorigin src="/assets/index-DgqQ0zsa.js"></script>
+      <link rel="stylesheet" crossorigin href="/assets/index-BO1oQ8tu.css">
+    </head>
+    <body>
+        <div class="app-layout">
+            <!-- ## Navbar ############################################### -->
+            <nav class="navbar">
+                <div class="navbar-brand">
+                    <span id="title-typst">Typst</span>
+                    <span id="title-ide">IDE</span>
+                </div>
 
-    <!-- ## Navbar ############################################### -->
-    <nav class="navbar">
-        <div class="navbar-brand"><span id="title-typst">Typst</span> <span id="title-ide">IDE</span></div>
+                <div class="navbar-menu">
+                    <!-- Fichier -->
+                    <div class="menu-item">
+                        <button class="menu-trigger">Fichier</button>
+                        <ul class="dropdown">
+                            <li>
+                                <button id="new-project">
+                                    Nouveau projet
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">shift</kbd>
+                                        <kbd class="kbd kbd-md">N</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="open-project">
+                                    Ouvrir un projet
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">shift</kbd>
+                                        <kbd class="kbd kbd-md">O</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
 
-        <div class="navbar-menu">
+                    <!-- Édition -->
+                    <div class="menu-item">
+                        <button class="menu-trigger">Édition</button>
+                        <ul class="dropdown">
+                            <li>
+                                <button id="action-undo">
+                                    Annuler
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">Z</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="action-redo">
+                                    Rétablir
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">Y</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li class="separator"></li>
+                            <li>
+                                <button id="action-search">
+                                    Chercher
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">F</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="action-replace">
+                                    Remplacer
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">H</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="action-goto">
+                                    Aller à la ligne
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">G</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="action-comment">
+                                    Commenter la ligne
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">/</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
 
-            <!-- Fichier -->
-            <div class="menu-item">
-                <button class="menu-trigger">Fichier</button>
-                <ul class="dropdown">
-                    <li>
-                        <button id="new-project">
-                            Nouveau projet
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">shift</kbd>
-                                <kbd class="kbd kbd-md">N</kbd>
-                            </div> 
-                        </button>
-                    </li>
-                    <li>
-                        <button id="open-project">
-                            Ouvrir un projet 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">shift</kbd>
-                                <kbd class="kbd kbd-md">O</kbd>
-                            </div> 
-                        </button>
-                    </li>
-                </ul>
-            </div>
+                    <!-- Vue -->
+                    <div class="menu-item">
+                        <button class="menu-trigger">Vue</button>
+                        <ul class="dropdown">
+                            <li>
+                                <button id="webview-zoom-in">
+                                    Agrandir
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">shift</kbd>
+                                        <kbd class="kbd kbd-md">+</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="webview-zoom-out">
+                                    Rétrécir
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">shift</kbd>
+                                        <kbd class="kbd kbd-md">-</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="webview-zoom-reset">
+                                    Réinitialiser
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">shift</kbd>
+                                        <kbd class="kbd kbd-md">0</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li class="separator"></li>
+                            <li>
+                                <button id="editor-zoom-in">
+                                    Agrandir l'éditeur
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">alt</kbd>
+                                        <kbd class="kbd kbd-md">+</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="editor-zoom-out">
+                                    Rétrécir l'éditeur
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">alt</kbd>
+                                        <kbd class="kbd kbd-md">-</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button id="editor-zoom-reset">
+                                    Réinitialiser l'éditeur
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">alt</kbd>
+                                        <kbd class="kbd kbd-md">0</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li class="separator"></li>
+                            <li>
+                                <button id="toggle-console">
+                                    Console
+                                    <div>
+                                        <kbd class="kbd kbd-md">ctrl</kbd>
+                                        <kbd class="kbd kbd-md">E</kbd>
+                                    </div>
+                                </button>
+                            </li>
+                            <li class="separator"></li>
+                            <li>
+                                <label class="menu-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        id="auto-compile"
+                                        checked
+                                    />
+                                    Auto-compilation
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
 
-            <!-- Édition -->
-            <div class="menu-item">
-                <button class="menu-trigger">Édition</button>
-                <ul class="dropdown">
-                    <li>
-                        <button id="action-undo">
-                            Annuler 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">Z</kbd>
-                            </div> 
-                        </button>
-                    </li>
-                    <li>
-                        <button id="action-redo">
-                            Rétablir 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">Y</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li class="separator"></li>
-                    <li>
-                        <button id="action-search">
-                            Chercher 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">F</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li>
-                        <button id="action-replace">
-                            Remplacer 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">H</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li>
-                        <button id="action-goto">
-                            Aller à la ligne 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">G</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li>
-                        <button id="action-comment">
-                            Commenter la ligne 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">/</kbd>
-                            </div>
-                        </button>
-                    </li>
-                </ul>
-            </div>
+                    <!-- Aide -->
+                    <div class="menu-item">
+                        <button class="menu-trigger">Aide</button>
+                        <ul class="dropdown">
+                            <li>
+                                <button id="editor-fontfamily-btn">
+                                    Changer la police de l'éditeur
+                                </button>
+                            </li>
+                            <li class="separator"></li>
+                            <li>
+                                <button onclick="window.__TAURI__.opener.openUrl('https://typst.app/docs/')">
+                                    Documentation Typst
+                                    <span class="material-symbols-outlined" style="font-size: 16px">open_in_new</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button onclick="window.__TAURI__.opener.openUrl('https://github.com/gnoooo/typst-ide')">
+                                    Repo officiel de Typst IDE
+                                    <span class="material-symbols-outlined" style="font-size: 16px">open_in_new</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-            <!-- Vue -->
-            <div class="menu-item">
-                <button class="menu-trigger">Vue</button>
-                <ul class="dropdown">
-                    <li>
-                        <button id="zoom-in">
-                            Agrandir 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">Shift</kbd>
-                                <kbd class="kbd kbd-md">+</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li>
-                        <button id="zoom-out">
-                            Rétrécir 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">Shift</kbd>
-                                <kbd class="kbd kbd-md">-</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li>
-                        <button id="zoom-reset">
-                            Taille normale 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">0</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li class="separator"></li>
-                    <li>
-                        <button id="toggle-console">
-                            Console 
-                            <div>
-                                <kbd class="kbd kbd-md">ctrl</kbd>
-                                <kbd class="kbd kbd-md">E</kbd>
-                            </div>
-                        </button>
-                    </li>
-                    <li class="separator"></li>
-                    <li>
-                        <label class="menu-checkbox">
-                            <input type="checkbox" id="auto-compile" checked>
-                            Auto-compilation
-                        </label>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Aide -->
-            <div class="menu-item">
-                <button class="menu-trigger">Aide</button>
-                <ul class="dropdown">
-                    <li><button id="editor-fontfamily-btn">Changer la police de l'éditeur</button></li>
-                    <li class="separator"></li>
-                    <li><button onclick="window.__TAURI__.opener.openUrl('https://typst.app/docs/')">Documentation Typst <span class="material-symbols-outlined" style="font-size: 16px;">open_in_new</span></button></li>
-                    <li><button onclick="window.__TAURI__.opener.openUrl('https://gitlab.com/gnoooo/typst-ide')">Repo officiel de Typst IDE<span class="material-symbols-outlined" style="font-size: 16px;">open_in_new</span></button></li>
-                </ul>
-            </div>
-
-        </div>
-
-        <!-- <div class="navbar-end">
+                <!-- <div class="navbar-end">
         </div> -->
-    </nav>
-    <div class="toolbar-row">
+            </nav>
+            <div class="toolbar-row">
+                <span class="flex gap-2">
+                    <span class="gap-2">
+                        <button
+                            class="tool-btn _unsaved-blinking"
+                            id="unsaved-btn"
+                        >
+                            <span
+                                class="material-symbols-outlined"
+                                id="unsaved-icon"
+                                >file_save</span
+                            >
+                        </button>
+                        <button
+                            class="tool-btn _open-project-blinking"
+                            id="open-project-btn"
+                        >
+                            <span
+                                class="material-symbols-outlined"
+                                id="open-project-icon"
+                                >folder_open</span
+                            >
+                        </button>
+                        <button class="tool-btn" id="notepad-btn">
+                            <span
+                                class="material-symbols-outlined"
+                                id="notepad-icon"
+                                >sticky_note_2</span
+                            >
+                        </button>
+                    </span>
 
-            <span class="flex gap-2">
-                <span class="gap-2">
-                    <button class="tool-btn _unsaved-blinking" id="unsaved-btn">
-                        <span class="material-symbols-outlined" id="unsaved-icon">file_save</span>
-                    </button>
-                    <button class="tool-btn _open-project-blinking" id="open-project-btn">
-                        <span class="material-symbols-outlined" id="open-project-icon">folder_open</span>
-                    </button>
-                    <button class="tool-btn" id="notepad-btn">
-                        <span class="material-symbols-outlined" id="notepad-icon">sticky_note_2</span>
-                    </button>
+                    <div class="btn-group flex justify-start" id="text-formatting-panel">
+                        <button class="tool-btn" id="bold-btn">B</button>
+                        <button class="tool-btn" id="italic-btn">I</button>
+                        <button class="tool-btn" id="underline-btn">U</button>
+                    </div>
+                    <div class="menu-item" id="structures-menu">
+                        <button class="tool-btn menu-trigger" id="structures-btn">
+                            #
+                            <span class="material-symbols-outlined" id="structures-btn-icon">chevron_right</span>
+                        </button>
+                        <ul class="dropdown" id="structures-dropdown">
+                            <!-- Peuplé avec structures.js -->
+                        </ul>
+                    </div>
                 </span>
-    
-                <div class="btn-group flex justify-start" id="text-formatting-panel">
-                    <button class="tool-btn" id="bold-btn">B</button>
-                    <button class="tool-btn" id="italic-btn">I</button>
-                    <button class="tool-btn" id="underline-btn">U</button>
+
+                <div class="btn-group flex" id="preview-zoom-panel">
+                    <button class="tool-btn" id="zoom-preview-out-btn">
+                        -
+                    </button>
+                    <span class="flex items-center text-align-center" ²id="zoom-display">
+                        <input
+                            class="w-8"
+                            id="zoom-preview-input"
+                            type="number"
+                            min="20"
+                            max="400"
+                            value="100"
+                            step="10"
+                        />
+                        %
+                    </span>
+                    <button class="tool-btn" id="zoom-preview-in-btn">+</button>
                 </div>
 
-            </span>
-
-            <div class="btn-group flex" id="preview-zoom-panel">
-                <button class="tool-btn" id="zoom-preview-out-btn">-</button>
-                <span class="flex items-center text-align-center" id="zoom-display">
-                    <!-- weird instructions to remove increment and decrement arrows -->
-                    <input class="w-8" id="zoom-preview-input" type="number" min="20" max="400" value="100" step="10">
-                    %
-                </span>
-                <button class="tool-btn" id="zoom-preview-in-btn">+</button>
+                <div class="flex gap-2 justify-end">
+                    <button class="tool-btn" id="compile-btn">Compiler</button>
+                    <button class="tool-btn" id="save-btn">Save</button>
+                </div>
             </div>
-            
-            <div class="flex gap-2 justify-end">
-                <button class="tool-btn" id="compile-btn">Compiler</button>
-                <button class="tool-btn" id="save-btn">Save</button>
+
+            <!-- ## Output console ####################################### -->
+            <div id="output-console" class="output-console hidden">
+                <div class="console-header">
+                    <span>Console de compilation</span>
+                    <button id="close-console" title="Fermer">&#x2715;</button>
+                </div>
+                <div id="console-content" class="console-content"></div>
             </div>
-        
-    </div>
 
-    <!-- ## Output console ####################################### -->
-    <div id="output-console" class="output-console hidden">
-        <div class="console-header">
-            <span>Console de compilation</span>
-            <button id="close-console" title="Fermer">&#x2715;</button>
-        </div>
-        <div id="console-content" class="console-content"></div>
-    </div>
-
-    <!-- ## Main split ########################################### -->
-    <div class="main-split" id="main-split">
-
-        <div class="pane editor-pane" id="editor-pane">
-            <!-- <div class="pane-header">
-                <span id="project-name" class="project-name">&#8212; Aucun projet &#8212;</span>
-                <span id="save-indicator" class="save-indicator" title="Sauvegard&eacute;">Save</span>
-            </div> -->
-            <!-- <div class="mockup-window bg-base-100 border border-base-300"> -->
-                <div id="typst-editor" class="editor-container"></div>
-
-            <!-- </div> -->
-        </div>
-
-        <div class="resize-handle" id="resize-handle"></div>
-
-        <div class="pane preview-pane" id="preview-pane">
-            <!-- <div id="preview-container"> -->
-                <div id="preview" class="preview-content">
-                    <iframe id="preview-frame" sandbox="allow-same-origin"></iframe>
+            <!-- ## Main split ########################################### -->
+            <div class="main-split" id="main-split">
+                <div class="pane editor-pane" id="editor-pane">
+                    <div id="typst-editor" class="editor-container"></div>
                 </div>
 
-            <!-- </div> -->
-        </div>
+                <div class="resize-handle" id="resize-handle"></div>
 
-    </div>
+                <div class="pane preview-pane" id="preview-pane">
+                    <!-- <div id="preview-container"> -->
+                    <div id="preview" class="preview-content">
+                        <iframe
+                            id="preview-frame"
+                            sandbox="allow-same-origin"
+                        ></iframe>
+                    </div>
 
-    <!-- ## Status bar ########################################### -->
-    <!-- <div class="status-bar">
+                    <!-- </div> -->
+                </div>
+            </div>
+
+            <!-- ## Status bar ########################################### -->
+            <!-- <div class="status-bar">
         <span id="status-project-path"></span>
         <div class="status-right">
             <span id="status-zoom">100%</span>
         </div>
     </div> -->
+        </div>
 
-</div>
+        <!-- Toast container -->
+        <div id="toast-container" class="toast-container"></div>
 
-<!-- Toast container -->
-<div id="toast-container" class="toast-container"></div>
-
-<script src="vendor/vs/loader.js"></script>
-</body>
+        <script src="vendor/vs/loader.js"></script>
+    </body>
 </html>

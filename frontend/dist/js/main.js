@@ -3,7 +3,7 @@
  *  wires all modules together
  */
 
-import { createEditor, setEditorTheme, editorZoomIn, editorZoomOut, editorZoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily, getEditor } from "./editor.js";
+import { createEditor, setEditorTheme, editorZoomIn, editorZoomOut, editorZoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily, getEditor, handleImagePaste } from "./editor.js";
 import { initPreview, zoomPreviewIn, zoomPreviewOut, zoomPreviewReset, getPreviewZoom, scrollToJumpPos, fitPreviewToWidth } from "./preview.js";
 import { initWebviewZoom, webviewZoomIn, webviewZoomOut, webviewZoomReset } from "./webview-zoom.js";
 import { initToolbar, initTheme, writeToConsole, showConsole } from "./toolbar.js";
@@ -29,6 +29,7 @@ async function main() {
   const container = document.getElementById("typst-editor");
   const editor = await createEditor(container);
   window.__typstEditor = editor;
+  editor.getDomNode().addEventListener("paste", handleImagePaste);
 
   initTheme((theme) => setEditorTheme(theme));
 
@@ -169,23 +170,27 @@ async function main() {
 
   // Change editor font family
   document.getElementById("editor-fontfamily-btn")?.addEventListener("click", async () => {
-      const { invoke } = window.__TAURI__.core;
-      const current = getCurrentFontFamily();
-      const newFont = await showPrompt({
-        title: "Changer la police de l'éditeur",
-        label:
-          'Nom de la police (ex: "Fira Code", "JetBrains Mono", "Cascadia Mono")',
-        placeholder: current || "Fira Code",
-        validate: async (v) => {
-          const exists = await invoke("font_exists", { name: v });
-          return exists || `Police "${v}" introuvable sur cette machine.`;
-        },
-      });
-      if (newFont !== null) {
-        setEditorFontFamily(newFont);
-        updateBtn();
-      }
+    const { invoke } = window.__TAURI__.core;
+    const current = getCurrentFontFamily();
+    const newFont = await showPrompt({
+      title: "Changer la police de l'éditeur",
+      label:
+        'Nom de la police (ex: "Fira Code", "JetBrains Mono", "Cascadia Mono")',
+      placeholder: current || "Fira Code",
+      validate: async (v) => {
+        const exists = await invoke("font_exists", { name: v });
+        return exists || `Police "${v}" introuvable sur cette machine.`;
+      },
     });
+    if (newFont !== null) {
+      setEditorFontFamily(newFont);
+      updateBtn();
+    }
+  });
+
+  // handle image pasting
+
+
 
   unsavedBtnUpdate();
   openProjectBtnUpdate();
@@ -209,9 +214,9 @@ async function main() {
   //     });
   // });
 
-  document.addEventListener("click", (e) => {
-    updateBtn();
-  });
+  // document.addEventListener("click", (e) => {
+  //   updateBtn();
+  // });
 }
 
 // ## Helpers #######################################################
