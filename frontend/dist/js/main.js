@@ -3,7 +3,7 @@
  *  wires all modules together
  */
 
-import { createEditor, setEditorTheme, editorZoomIn, editorZoomOut, editorZoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily, getEditor, handleImagePaste } from "./editor.js";
+import { createEditor, setEditorTheme, editorZoomIn, editorZoomOut, editorZoomReset, getCurrentZoomPct, getCurrentFontFamily, setEditorFontFamily, getEditor, insertImageAtCursor } from "./editor.js";
 import { initPreview, zoomPreviewIn, zoomPreviewOut, zoomPreviewReset, getPreviewZoom, scrollToJumpPos, fitPreviewToWidth } from "./preview.js";
 import { initWebviewZoom, webviewZoomIn, webviewZoomOut, webviewZoomReset } from "./webview-zoom.js";
 import { initToolbar, initTheme, writeToConsole, showConsole } from "./toolbar.js";
@@ -13,6 +13,7 @@ import { openModal, showPrompt } from "./modal.js";
 import { openNotepad } from "./notepad.js";
 import { openHistory } from "./history.js";
 import { updateBtn, toggleBtnIcon, populateStructureDropdown } from "./structures.js";
+import { readImage } from "@tauri-apps/plugin-clipboard-manager";
 
 async function main() {
   if (!window.__TAURI__) {
@@ -29,7 +30,64 @@ async function main() {
   const container = document.getElementById("typst-editor");
   const editor = await createEditor(container);
   window.__typstEditor = editor;
-  editor.getDomNode().addEventListener("paste", handleImagePaste);
+  const { invoke } = window.__TAURI__.core;
+  const editorDomNode = editor.getDomNode();
+  const editorTextarea = editorDomNode?.querySelector("textarea");
+
+  // Image paste support: detect data:image/...;base64,... or binary clipboard images,
+  // then store file in project images/
+  const onImagePaste = async (event) => {
+    if (event.defaultPrevented) return;
+
+    console.debug("[paste-image] paste event captured");
+
+    let payload = await extractImagePayload(event);
+    if (!payload) {
+      console.debug("[paste-image] no web payload, trying native clipboard fallback");
+      payload = await readNativeImagePayload();
+    }
+    if (!payload) {
+      console.debug("[paste-image] no image payload found in clipboard");
+      writeToConsole("info", "Collage: aucune image détectée dans le presse-papiers.");
+      return;
+    }
+
+    console.debug(`[paste-image] image payload detected (${payload.source})`);
+
+    const project = getCurrentProject();
+    if (!project?.path) {
+      event.preventDefault();
+      writeToConsole("error", "Ouvre un projet avant de coller une image.");
+      showConsole();
+      return;
+    }
+
+    try {
+      if (payload.preventDefault) event.preventDefault();
+      const relativePath = await invoke("save_data_image", {
+        projectPath: project.path,
+        dataUrl: payload.dataUrl,
+      });
+
+      insertImageAtCursor(relativePath);
+      writeToConsole("info", `Image enregistrée: ${relativePath}`);
+      console.info(`[paste-image] saved to ${project.path}/${relativePath}`);
+    } catch (error) {
+      console.error("[paste-image] save_data_image failed", error);
+      writeToConsole("error", `Erreur collage image: ${String(error)}`);
+      showConsole();
+    }
+  };
+
+  editorDomNode?.addEventListener("paste", onImagePaste, true);
+  editorTextarea?.addEventListener("paste", onImagePaste, true);
+  document.addEventListener(
+    "paste",
+    (event) => {
+      if (editor.hasTextFocus()) onImagePaste(event);
+    },
+    true,
+  );
 
   initTheme((theme) => setEditorTheme(theme));
 
@@ -188,10 +246,6 @@ async function main() {
     }
   });
 
-  // handle image pasting
-
-
-
   unsavedBtnUpdate();
   openProjectBtnUpdate();
 
@@ -231,6 +285,101 @@ function bindMenuAction(id, fn) {
 function updateZoomPreview() {
   const zoomEl = document.getElementById("zoom-preview-input");
   if (zoomEl) zoomEl.value = getPreviewZoom();
+}
+
+function extractDataImageUrl(event) {
+  const clipboard = event.clipboardData;
+  if (!clipboard) return null;
+
+  const dataImageRegex = /data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=\s]+/i;
+
+  const text = clipboard.getData("text/plain") ?? "";
+  const textMatch = text.match(dataImageRegex);
+  if (textMatch) return textMatch[0].replace(/\s+/g, "");
+
+  const html = clipboard.getData("text/html") ?? "";
+  const htmlMatch = html.match(dataImageRegex);
+  if (htmlMatch) return htmlMatch[0].replace(/\s+/g, "");
+
+  return null;
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error ?? new Error("FileReader failed"));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function extractImagePayload(event) {
+  const clipboard = event.clipboardData;
+  if (!clipboard) return null;
+
+  const fromTextOrHtml = extractDataImageUrl(event);
+  if (fromTextOrHtml) {
+    return { dataUrl: fromTextOrHtml, source: "text/html", preventDefault: true };
+  }
+
+  const items = clipboard.items;
+  if (items?.length) {
+    for (const item of items) {
+      if (item.type?.startsWith("image/")) {
+        const blob = item.getAsFile();
+        if (!blob) continue;
+        const dataUrl = await blobToDataUrl(blob);
+        if (dataUrl.startsWith("data:image/")) {
+          return { dataUrl, source: "clipboard item", preventDefault: true };
+        }
+      }
+    }
+  }
+
+  const files = clipboard.files;
+  if (files?.length) {
+    for (const file of files) {
+      if (!file.type?.startsWith("image/")) continue;
+      const dataUrl = await blobToDataUrl(file);
+      if (dataUrl.startsWith("data:image/")) {
+        return { dataUrl, source: "clipboard file", preventDefault: true };
+      }
+    }
+  }
+
+  return null;
+}
+
+async function readNativeImagePayload() {
+  try {
+    const img = await readImage();
+    if (!img) return null;
+
+    const [{ width, height }, rgba] = await Promise.all([img.size(), img.rgba()]);
+    if (!width || !height || !rgba) return null;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    const imageData = new ImageData(new Uint8ClampedArray(rgba), width, height);
+    ctx.putImageData(imageData, 0, 0);
+    const dataUrl = canvas.toDataURL("image/png");
+
+    if (!dataUrl.startsWith("data:image/")) return null;
+    return { dataUrl, source: "native clipboard", preventDefault: true };
+  } catch (error) {
+    const msg = String(error?.message ?? error ?? "");
+    const expected = msg.includes("requested format") || msg.includes("clipboard is empty");
+    if (expected) {
+      console.debug("[paste-image] native fallback: no image format available");
+    } else {
+      console.warn("[paste-image] native fallback failed", error);
+    }
+    return null;
+  }
 }
 
 // Force an immediate preview compile by programmatically running the Tauri command

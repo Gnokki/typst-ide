@@ -16,6 +16,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@tauri-apps/plugin-clipboard-manager": "^2.3.2",
     "material-symbols": "^0.40.2",
     "monaco-editor": "^0.52.2"
   },

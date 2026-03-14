@@ -47,9 +47,20 @@ export function createEditor(container) {
                 wordWrap: 'on',
                 automaticLayout: true,
                 lineNumbersMinChars: 4,
-                // Disable shortcuts Monaco would steal from the toolbar
                 contextmenu: true,
+                copyWithSyntaxHighlighting: false,
             });
+
+            // Suppress clipboard access errors from Monaco
+            if (navigator.clipboard) {
+                const originalReadText = navigator.clipboard.readText;
+                navigator.clipboard.readText = function() {
+                    return originalReadText.apply(this, arguments).catch(() => {
+                        // Silently ignore clipboard read errors
+                        return '';
+                    });
+                };
+            }
 
             resolve(_editor);
         });
@@ -57,28 +68,81 @@ export function createEditor(container) {
 }
 
 export function handleImagePaste(event) {
+    if (event.defaultPrevented) return false;
+
+    console.debug("[paste-image] paste event captured");
+
   const items = event.clipboardData?.items;
-  if (!items) return;
+    if (items && items.length > 0) {
+        for (const item of items) {
+            if (item.type.startsWith("image/")) {
+                event.preventDefault();
 
-  for (const item of items) {
-    if (item.type.startsWith("image/")) {
+                const blob = item.getAsFile();
+                if (!blob) return false;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const dataUrl = e.target.result;
+                        insertImageAtCursor(dataUrl);
+                        console.info("[paste-image] image inserted from clipboard item");
+                    } catch (error) {
+                        console.error("Error inserting image:", error);
+                    }
+                };
+
+                reader.readAsDataURL(blob);
+                return true;
+            }
+        }
+    }
+
+    const files = event.clipboardData?.files;
+    if (!files || files.length === 0) {
+        // Some environments/apps put image payload as text/html or data URL text.
+        const text = event.clipboardData?.getData("text/plain") ?? "";
+        const html = event.clipboardData?.getData("text/html") ?? "";
+
+        if (text.startsWith("data:image/")) {
+            console.info("[paste-image] image payload detected as text data URL");
+            return true;
+        }
+
+        if (html.includes("src=\"data:image/") || html.includes("src='data:image/")) {
+            console.info("[paste-image] image payload detected in HTML clipboard content");
+            return true;
+        }
+
+        console.debug("[paste-image] no binary image found in ClipboardEvent; default paste kept");
+        return false;
+    }
+
+    for (const file of files) {
+        if (file.type.startsWith("image/")) {
       event.preventDefault();
-
-      const blob = item.getAsFile();
-      if (!blob) return;
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        const dataUrl = e.target.result;
-        insertImageAtCursor(dataUrl);
+        try {
+          const dataUrl = e.target.result;
+          insertImageAtCursor(dataUrl);
+                    console.info("[paste-image] image inserted from clipboard file");
+        } catch (error) {
+          console.error("Error inserting image:", error);
+        }
       };
 
-      reader.readAsDataURL(blob);
+            reader.readAsDataURL(file);
+                        return true;
     }
   }
+
+        console.debug("[paste-image] clipboard has files, but none are images");
+        return false;
 }
 
-function insertImageAtCursor(dataUrl) {
+export function insertImageAtCursor(dataUrl) {
   if (!_editor) return;
 
   const selection = _editor.getSelection();

@@ -155,6 +155,76 @@ async fn save_file(path: String, content: String) -> Result<(), String> {
     std::fs::write(&path, &content).map_err(|e| e.to_string())
 }
 
+/// Saves a `data:image/...;base64,...` payload as a file in `<project>/images/`
+/// Returns the relative path to use in Typst (e.g. `images/pasted-123.png`)
+#[tauri::command]
+async fn save_data_image(project_path: String, data_url: String) -> Result<String, String> {
+    use base64::Engine;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    const PREFIX: &str = "data:image/";
+    if !data_url.starts_with(PREFIX) {
+        return Err("Format invalide: image data URL attendue".to_string());
+    }
+
+    let remainder = &data_url[PREFIX.len()..];
+    let (raw_ext, base64_payload) = remainder
+        .split_once(";base64,")
+        .ok_or_else(|| "Format invalide: ';base64,' manquant".to_string())?;
+
+    if raw_ext.trim().is_empty() {
+        return Err("Format invalide: extension image manquante".to_string());
+    }
+
+    let ext = match raw_ext.trim().to_ascii_lowercase().as_str() {
+        "jpeg" => "jpg".to_string(),
+        "svg+xml" => "svg".to_string(),
+        other => other
+            .chars()
+            .map(|c| {
+                if c.is_ascii_alphanumeric() {
+                    c
+                } else {
+                    '_'
+                }
+            })
+            .collect(),
+    };
+
+    let cleaned_b64: String = base64_payload
+        .chars()
+        .filter(|c| !c.is_ascii_whitespace())
+        .collect();
+
+    let bytes = base64::engine::general_purpose::STANDARD
+        .decode(cleaned_b64)
+        .map_err(|e| format!("Base64 invalide: {e}"))?;
+
+    let images_dir = std::path::Path::new(&project_path).join("images");
+    std::fs::create_dir_all(&images_dir).map_err(|e| e.to_string())?;
+
+    let ts = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|e| e.to_string())?
+        .as_millis();
+
+    for idx in 0..1000 {
+        let filename = if idx == 0 {
+            format!("pasted-{ts}.{ext}")
+        } else {
+            format!("pasted-{ts}-{idx}.{ext}")
+        };
+
+        let full_path = images_dir.join(&filename);
+        if !full_path.exists() {
+            std::fs::write(&full_path, &bytes).map_err(|e| e.to_string())?;
+            return Ok(format!("images/{filename}"));
+        }
+    }
+
+    Err("Impossible de créer un nom de fichier unique pour l'image".to_string())
+}
+
 // ###########################################################################
 // Database
 // ###########################################################################
@@ -349,6 +419,7 @@ fn main() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_clipboard_manager::init())
         .setup(|app| {
             let data_dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&data_dir)?;
@@ -370,6 +441,7 @@ fn main() {
             create_project,
             open_project,
             save_file,
+            save_data_image,
             pick_pdf_path,
             export_pdf,
             font_exists,
