@@ -8,6 +8,7 @@ use typst_ide_core::compiler::{DiagnosticInfo, PreviewResult, compile_to_pdf, co
 use typst_ide_core::database::{
     history_db::{self},
     notes_db::{self, Note},
+    bibliography_db::{self, BibliographyEntry},
 };
 
 // ## Database state ############################################################
@@ -15,6 +16,7 @@ use typst_ide_core::database::{
 /// Tauri-managed state for the notes database
 pub struct NotesDbState(pub Mutex<rusqlite::Connection>);
 pub struct HistoryDbState(pub Mutex<rusqlite::Connection>);
+pub struct BibliographyDbState(pub Mutex<rusqlite::Connection>);
 
 /// Tauri-managed state for a second database (example)
 // pub struct OtherDbState(pub Mutex<rusqlite::Connection>);
@@ -345,6 +347,56 @@ fn update_history_entry(
     history_db::update_history_entry(&conn, &id, &name, &path).map_err(|e| e.to_string())
 }
 
+/// ####################################################
+/// Bibliography DB
+#[tauri::command]
+fn add_bibliography_entry(
+    state: tauri::State<'_, BibliographyDbState>,
+    title: String,
+    path: String,
+    full: bool,
+    style: String,
+) -> Result<bool, String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    let inserted = bibliography_db::add_entry(&conn, &title, &path, &full, &style).map_err(|e| e.to_string())?;
+    Ok(inserted)
+}
+
+#[tauri::command]
+fn get_bibliography(
+    state: tauri::State<'_, BibliographyDbState>,
+) -> Result<Vec<bibliography_db::BibliographyEntry>, String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    bibliography_db::get_bibliography(&conn).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn delete_bibliography_entry(
+    state: tauri::State<'_, BibliographyDbState>,
+    title: String
+) -> Result<(), String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    bibliography_db::delete_bibliography_entry(&conn, &title).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn update_bibliography_entry(
+    state: tauri::State<'_, BibliographyDbState>,
+    title: String,
+    path: String,
+    full: bool,
+    style: String,
+) -> Result<(), String> {
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    bibliography_db::update_bibliography_entry(
+        &conn,
+        &title,
+        &path,
+        &full,
+        &style,
+    ).map_err(|e| e.to_string())
+}
+
 // ###########################################################################
 // PDF export
 // ###########################################################################
@@ -433,6 +485,12 @@ fn main() {
             let history_conn = history_db::init_db(history_db_path.to_str().unwrap())
                 .expect("Failed to initialise history DB");
             app.manage(HistoryDbState(Mutex::new(history_conn)));
+
+            let bibliography_db_path = data_dir.join("bibliography.db");
+            let bibliography_conn = bibliography_db::init_db(bibliography_db_path.to_str().unwrap())
+                .expect("Failed to initialise bibliography DB");
+            app.manage(BibliographyDbState(Mutex::new(bibliography_conn)));
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -447,17 +505,24 @@ fn main() {
             font_exists,
             set_webview_zoom,
             read_file,
+
             add_note,
             get_all_notes,
             delete_note,
             update_note,
             get_global_notes,
             get_project_notes,
+
             get_current_project_id,
             add_history_entry,
             get_history,
             delete_history_entry,
             update_history_entry,
+
+            add_bibliography_entry,
+            get_bibliography,
+            delete_bibliography_entry,
+            update_bibliography_entry,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
